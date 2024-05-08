@@ -3,4 +3,5 @@
     <string name="title_home">Home</string>
     <string name="title_smedia">Social Media</string>
     <string name="title_profile">Profile</string>
+    <string name="first_start_one_text">Need <font fgcolor='#0EAB27'>rest</font> before a new <font fgcolor='#0EAB27'>start</font>?</string>
 </resources>

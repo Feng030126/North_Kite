@@ -1,6 +1,8 @@
 package com.rst2g1.northkite
 
 import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Resources
 import android.content.res.Resources.Theme
 import android.os.Bundle
@@ -20,11 +22,27 @@ import com.rst2g1.northkite.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        sharedPreferences = getSharedPreferences("prefs", Context.MODE_PRIVATE)
+        val isFirstLaunch = sharedPreferences.getBoolean("isFirstLaunch", true)
+
+        if (isFirstLaunch) {
+            // If it's the first launch, show the startup page
+            val intent = Intent(this, FirstStartupActivity::class.java)
+            startActivity(intent)
+            // Set isFirstLaunch to false to indicate the app has been launched before
+            sharedPreferences.edit().putBoolean("isFirstLaunch", false).apply()
+            // Finish MainActivity to prevent the user from navigating back to it
+            finish()
+            return
+        }
+
         binding = ActivityMainBinding.inflate(layoutInflater)
+
         setContentView(binding.root)
 
         val navView: BottomNavigationView = binding.navView
@@ -40,11 +58,20 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        supportActionBar!!.setBackgroundDrawable(ResourcesCompat.getDrawable(resources, R.drawable.action_bar_bg, null))
+        //Set custom background, action_bar_bg.xml contain solid color
+        supportActionBar!!.setBackgroundDrawable(
+            ResourcesCompat.getDrawable(
+                resources,
+                R.drawable.action_bar_bg,
+                null
+            )
+        )
         supportActionBar!!.setDisplayShowTitleEnabled(false)
 
+        //Setup custom logo
         supportActionBar!!.setDisplayShowCustomEnabled(true)
 
-        supportActionBar!!.setCustomView(layoutInflater.inflate(R.layout.logo_layout, null))
+        supportActionBar!!.customView = layoutInflater.inflate(R.layout.logo_layout, null)
     }
+
 }
