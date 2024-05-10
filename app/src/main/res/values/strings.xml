@@ -4,4 +4,9 @@
     <string name="title_smedia">Social Media</string>
     <string name="title_profile">Profile</string>
     <string name="first_start_one_text">Need <font fgcolor='#0EAB27'>rest</font> before a new <font fgcolor='#0EAB27'>start</font>?</string>
+    <string name="first_start_two_text"><font fgcolor='#0EAB27'>Saving</font> for improve?</string>
+    <string name="first_start_three_text">Get ready to<font fgcolor='#0EAB27'> explore</font> your <font fgcolor='#0EAB27'>ambitions</font>!</string>
+    <string name="welcome">Welcome</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
 </resources>

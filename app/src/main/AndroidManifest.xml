@@ -23,9 +23,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".FirstStartupActivity" android:exported="true">
-            <!-- Declare StartupActivity as the launcher activity -->
-
         </activity>
+        <activity android:name=".LoginActivity" android:exported="true"/>
     </application>
 
 </manifest>

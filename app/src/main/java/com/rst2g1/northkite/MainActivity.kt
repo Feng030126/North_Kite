@@ -35,9 +35,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, FirstStartupActivity::class.java)
             startActivity(intent)
             // Set isFirstLaunch to false to indicate the app has been launched before
-            sharedPreferences.edit().putBoolean("isFirstLaunch", false).apply()
-            // Finish MainActivity to prevent the user from navigating back to it
-            finish()
+            //sharedPreferences.edit().putBoolean("isFirstLaunch", false).apply()
             return
         }
 
