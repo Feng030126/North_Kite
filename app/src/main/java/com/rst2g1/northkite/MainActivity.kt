@@ -3,20 +3,14 @@ package com.rst2g1.northkite
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.res.Resources
-import android.content.res.Resources.Theme
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Window
-import android.widget.ImageView
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.rst2g1.northkite.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -59,9 +53,7 @@ class MainActivity : AppCompatActivity() {
         //Set custom background, action_bar_bg.xml contain solid color
         supportActionBar!!.setBackgroundDrawable(
             ResourcesCompat.getDrawable(
-                resources,
-                R.drawable.action_bar_bg,
-                null
+                resources, R.drawable.action_bar_bg, null
             )
         )
         supportActionBar!!.setDisplayShowTitleEnabled(false)
