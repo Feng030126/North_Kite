@@ -1,5 +1,6 @@
 package com.rst2g1.northkite
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -14,11 +15,13 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         sharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
+        sharedPreferences.edit().putInt("login_status", -1).apply()
+        //login status: -1 for no login, 0 for logged in, 1 for guest
 
         binding = LoginPageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.buttonLogin.setOnClickListener{
+        binding.buttonLogin.setOnClickListener {
 
             //check if login field == prefs/database record
             //if yes, load main activity and probably call a function to read user data?
@@ -26,16 +29,17 @@ class LoginActivity : AppCompatActivity() {
 
         }
 
-        binding.buttonRegister.setOnClickListener{
+        binding.buttonRegister.setOnClickListener {
 
             //redirect to register layout
 
         }
 
         binding.buttonGuest.setOnClickListener {
-
             //set as guest profile
-
+            sharedPreferences.edit().putInt("login_status", 1).apply()
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
         }
 
     }

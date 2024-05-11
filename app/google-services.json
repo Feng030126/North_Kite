@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "19310272772",
+    "firebase_url": "https://northkite-1120-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "northkite-1120",
+    "storage_bucket": "northkite-1120.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:19310272772:android:a0c2c8e4372ec1a2603051",
+        "android_client_info": {
+          "package_name": "com.rst2g1.northkite"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA35FS-7DJD-VCp91LLF5aP9xcnKkxIl04"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

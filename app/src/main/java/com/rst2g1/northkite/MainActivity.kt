@@ -33,6 +33,13 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        val isLoggedIn = sharedPreferences.getInt("login_status", -1)
+
+        if (isLoggedIn == -1) {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         setContentView(binding.root)

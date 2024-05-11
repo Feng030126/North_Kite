@@ -21,6 +21,7 @@ class ProfileFragment : Fragment() {
     ): View {
         val profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
 
+
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         val root: View = binding.root
 

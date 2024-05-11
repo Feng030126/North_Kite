@@ -220,6 +220,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/linearLayout4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -257,6 +258,35 @@
                 android:src="@drawable/right_arrow" />
 
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/logout_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="32dp"
+            android:clickable="true"
+            android:contentDescription="@string/logout"
+            android:focusable="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
+            app:srcCompat="@drawable/ic_logout" />
+
+        <TextView
+            android:id="@+id/logout_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:height="48dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/logout"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/logout_icon"
+            app:layout_constraintStart_toEndOf="@+id/logout_icon"
+            app:layout_constraintTop_toTopOf="@+id/logout_icon" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
