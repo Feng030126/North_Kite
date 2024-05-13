@@ -17,4 +17,9 @@
     <string name="privacy_security"><![CDATA[Privacy & Security]]></string>
     <string name="theme">Theme</string>
     <string name="logout">Logout</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="recovery_email">Recovery Email</string>
+    <string name="register_welcome">Join the community of gap year activities with <font fgcolor='#0EAB27'>NORTH KITE</font></string>
 </resources>

@@ -5,10 +5,12 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.rst2g1.northkite.databinding.LoginPageBinding
+import com.rst2g1.northkite.databinding.RegisterPageBinding
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: LoginPageBinding
+    private lateinit var bindingRegister: RegisterPageBinding
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
