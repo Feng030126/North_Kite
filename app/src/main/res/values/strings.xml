@@ -22,4 +22,5 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="recovery_email">Recovery Email</string>
     <string name="register_welcome">Join the community of gap year activities with <font fgcolor='#0EAB27'>NORTH KITE</font></string>
+    <string name="login_to_continue">Login to Continue</string>
 </resources>

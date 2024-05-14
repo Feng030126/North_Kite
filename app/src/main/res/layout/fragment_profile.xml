@@ -264,7 +264,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="48dp"
             android:clickable="true"
             android:contentDescription="@string/logout"
             android:focusable="true"
@@ -287,6 +287,22 @@
             app:layout_constraintBottom_toBottomOf="@+id/logout_icon"
             app:layout_constraintStart_toEndOf="@+id/logout_icon"
             app:layout_constraintTop_toTopOf="@+id/logout_icon" />
+
+
+        <TextView
+            android:id="@+id/login_to_continue_label"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#B5000000"
+            android:gravity="center"
+            android:text="@string/login_to_continue"
+            android:textColor="#FFFFFF"
+            android:textSize="34sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
