@@ -21,6 +21,7 @@ class LoginActivity : AppCompatActivity() {
         //login status: -1 for no login, 0 for logged in, 1 for guest
 
         binding = LoginPageBinding.inflate(layoutInflater)
+        bindingRegister = RegisterPageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.buttonLogin.setOnClickListener {
@@ -34,6 +35,7 @@ class LoginActivity : AppCompatActivity() {
         binding.buttonRegister.setOnClickListener {
 
             //redirect to register layout
+            setContentView(bindingRegister.root)
 
         }
 
@@ -42,6 +44,11 @@ class LoginActivity : AppCompatActivity() {
             sharedPreferences.edit().putInt("login_status", 1).apply()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+        }
+
+        bindingRegister.buttonRegister2.setOnClickListener {
+            //Read register data
+            //save to database
         }
 
     }
