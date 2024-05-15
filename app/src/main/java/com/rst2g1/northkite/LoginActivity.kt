@@ -16,6 +16,8 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        supportActionBar?.hide()
+
         sharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
         sharedPreferences.edit().putInt("login_status", -1).apply()
         //login status: -1 for no login, 0 for logged in, 1 for guest
@@ -46,11 +48,9 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        bindingRegister.buttonRegister2.setOnClickListener {
-            //Read register data
-            //save to database
-        }
-
+//        bindingRegister.buttonRegister2.setOnClickListener {
+//            //Read register data
+//            //save to database
+//        }
     }
-
 }
