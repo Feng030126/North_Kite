@@ -9,6 +9,8 @@ import android.text.TextWatcher
 import android.widget.EditText
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.rst2g1.northkite.databinding.LoginPageBinding
 import com.rst2g1.northkite.databinding.RegisterPageBinding
 
@@ -18,7 +20,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var bindingRegister: RegisterPageBinding
     private lateinit var sharedPreferences: SharedPreferences
     private var isRegister = false
-    private lateinit var cancelDialog: AlertDialog
 
     private lateinit var firstNameEditText: EditText
     private lateinit var lastNameEditText: EditText
@@ -26,6 +27,9 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var passwordEditText: EditText
     private lateinit var confirmPasswordEditText: EditText
     private lateinit var recoveryEmailEditText: EditText
+
+    private lateinit var database: FirebaseDatabase
+    private lateinit var databaseReference: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +41,10 @@ class LoginActivity : AppCompatActivity() {
         binding = LoginPageBinding.inflate(layoutInflater)
         bindingRegister = RegisterPageBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        database =
+            FirebaseDatabase.getInstance("https://northkite-1120-default-rtdb.asia-southeast1.firebasedatabase.app")
+        databaseReference = database.reference.child("users")
 
         setupListeners()
         setupBackPressedHandler()
@@ -217,6 +225,48 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun registerAccount() {
-        // TODO: Implement account registration logic
+        val firstName = firstNameEditText.text.toString().trim()
+        val lastName = lastNameEditText.text.toString().trim()
+        val username = usernameEditText.text.toString().trim()
+        val password = passwordEditText.text.toString().trim()
+        val confirmPassword = confirmPasswordEditText.text.toString().trim()
+        val recoveryEmail = recoveryEmailEditText.text.toString().trim()
+
+        if (password != confirmPassword) {
+            confirmPasswordEditText.error = "Passwords do not match"
+            return
+        }
+
+        // Using email as ID
+        val userId = recoveryEmail.replace(".", ",")
+
+        val user = User(firstName, lastName, username, password, recoveryEmail, null, null)
+
+        databaseReference.child(userId).setValue(user)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Registration successful
+                    sharedPreferences.edit().putInt("login_status", 0).apply()
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                } else {
+                    // Registration failed
+                    AlertDialog.Builder(this)
+                        .setTitle("Registration Failed")
+                        .setMessage(task.exception?.message)
+                        .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                        .show()
+                }
+            }
     }
+
+    data class User(
+        val firstName: String,
+        val lastName: String,
+        val username: String,
+        val password: String,
+        val recoveryEmail: String,
+        val userGoal: String?,
+        val userType: String?
+    )
 }
