@@ -36,7 +36,8 @@ class HomeFragment : Fragment() {
         val imageList = ArrayList<SlideModel>()
 
         imageList.add(SlideModel(R.drawable.home_banner_1))
-        imageList.add(SlideModel(R.drawable.first_start_one_banner))
+        imageList.add(SlideModel(R.drawable.home_banner_2))
+        imageList.add(SlideModel(R.drawable.home_banner_3))
 
         binding.slideshow.setImageList(imageList, ScaleTypes.FIT)
 

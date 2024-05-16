@@ -25,4 +25,14 @@
     <string name="login_to_continue">Login to Continue</string>
     <string name="register">Register</string>
     <string name="cancel">Cancel</string>
+    <string name="buttonAssistance">buttonAssistance</string>
+    <string name="buttontravel">buttonTravel</string>
+    <string name="buttonjoboffer">buttonJobOffer</string>
+    <string name="buttonintern">buttonIntern</string>
+    <string name="buttonvolunteer">buttonVolunteer</string>
+    <string name="travel">Travel</string>
+    <string name="joboffer">JobOffer</string>
+    <string name="volunteer">Volunteer</string>
+    <string name="assistance">Assistance</string>
+    <string name="intern">Intern</string>
 </resources>
