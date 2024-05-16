@@ -162,33 +162,33 @@
             app:layout_constraintTop_toBottomOf="@+id/textViewConfirmPassword"
             app:layout_constraintWidth_percent="1.0" />
 
-        <!-- Recovery Email Label -->
+        <!-- Email Label -->
         <TextView
-            android:id="@+id/textViewRecoveryEmail"
+            android:id="@+id/textViewEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/recovery_email"
+            android:text="@string/email"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextConfirmPassword" />
 
         <!-- Recovery Email Input -->
         <EditText
-            android:id="@+id/editTextRecoveryEmail"
+            android:id="@+id/edit_text_email"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:autofillHints="emailAddress"
             android:background="@drawable/rounded_edittext_background"
-            android:hint="@string/recovery_email"
+            android:hint="@string/email"
             android:inputType="textEmailAddress"
             android:minHeight="48dp"
             android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewRecoveryEmail"
+            app:layout_constraintTop_toBottomOf="@+id/textViewEmail"
             app:layout_constraintWidth_percent="1.0" />
 
         <Button
@@ -202,7 +202,7 @@
             android:textColor="#311B92"
             app:layout_constraintEnd_toStartOf="@+id/buttonCancel"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextRecoveryEmail" />
+            app:layout_constraintTop_toBottomOf="@+id/edit_text_email" />
 
         <Button
             android:id="@+id/buttonCancel"
@@ -215,7 +215,7 @@
             android:textColor="#311B92"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/buttonRegister"
-            app:layout_constraintTop_toBottomOf="@+id/editTextRecoveryEmail" />
+            app:layout_constraintTop_toBottomOf="@+id/edit_text_email" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

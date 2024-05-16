@@ -1,135 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment">
+    android:layout_height="match_parent">
 
-    <com.denzcoskun.imageslider.ImageSlider
-        android:id="@+id/slideshow"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:iss_auto_cycle="true"
-        app:iss_period="1000"
-        app:iss_delay="1000"
-        app:iss_text_align="CENTER"/>
-
-    <ImageView
-        android:id="@+id/buttonTravel"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="40dp"
-        android:clickable="true"
-        android:contentDescription="@string/buttontravel"
-        android:focusable="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/slideshow"
-        app:srcCompat="@drawable/button_travel_icon" />
-
-    <TextView
-        android:id="@+id/textViewTravel"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/travel"
-        app:layout_constraintTop_toBottomOf="@+id/buttonTravel"
-        app:layout_constraintStart_toStartOf="@+id/buttonTravel"
-        app:layout_constraintEnd_toEndOf="@+id/buttonTravel"
-        android:layout_marginTop="8dp"/>
+        tools:context=".ui.home.HomeFragment">
 
-    <ImageView
-        android:id="@+id/buttonJobOffer"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:layout_marginStart="53dp"
-        android:layout_marginEnd="54dp"
-        android:clickable="true"
-        android:contentDescription="@string/buttonjoboffer"
-        android:focusable="true"
-        app:layout_constraintEnd_toStartOf="@+id/buttonIntern"
-        app:layout_constraintStart_toEndOf="@+id/buttonTravel"
-        app:layout_constraintTop_toTopOf="@+id/buttonTravel"
-        app:srcCompat="@drawable/button_joboffer_icon" />
+        <com.denzcoskun.imageslider.ImageSlider
+            android:id="@+id/slideshow"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:iss_auto_cycle="true"
+            app:iss_delay="1000"
+            app:iss_period="1000"
+            app:iss_text_align="CENTER"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textViewJobOffer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/joboffer"
-        app:layout_constraintTop_toBottomOf="@+id/buttonJobOffer"
-        app:layout_constraintStart_toStartOf="@+id/buttonJobOffer"
-        app:layout_constraintEnd_toEndOf="@+id/buttonJobOffer"
-        android:layout_marginTop="8dp"/>
+        <ImageView
+            android:id="@+id/buttonTravel"
+            android:layout_width="0dp"
+            android:layout_height="96dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"
+            android:contentDescription="@string/buttontravel"
+            android:focusable="true"
+            app:layout_constraintEnd_toStartOf="@+id/buttonJobOffer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/slideshow"
+            app:srcCompat="@drawable/button_travel_icon" />
 
-    <ImageView
-        android:id="@+id/buttonVolunteer"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginTop="52dp"
-        android:clickable="true"
-        android:contentDescription="@string/buttonintern"
-        android:focusable="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonTravel"
-        app:srcCompat="@drawable/button_volunteer_icon" />
+        <TextView
+            android:id="@+id/textViewTravel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/travel"
+            app:layout_constraintEnd_toEndOf="@+id/buttonTravel"
+            app:layout_constraintStart_toStartOf="@+id/buttonTravel"
+            app:layout_constraintTop_toBottomOf="@+id/buttonTravel" />
 
-    <TextView
-        android:id="@+id/textViewVolunteer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/volunteer"
-        app:layout_constraintTop_toBottomOf="@+id/buttonVolunteer"
-        app:layout_constraintStart_toStartOf="@+id/buttonVolunteer"
-        app:layout_constraintEnd_toEndOf="@+id/buttonVolunteer"
-        android:layout_marginTop="8dp"/>
+        <ImageView
+            android:id="@+id/buttonJobOffer"
+            android:layout_width="0dp"
+            android:layout_height="96dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"
+            android:contentDescription="@string/buttonjoboffer"
+            android:focusable="true"
+            app:layout_constraintEnd_toStartOf="@+id/buttonIntern"
+            app:layout_constraintStart_toEndOf="@+id/buttonTravel"
+            app:layout_constraintTop_toTopOf="@+id/buttonTravel"
+            app:srcCompat="@drawable/button_joboffer_icon" />
 
-    <ImageView
-        android:id="@+id/buttonAssistance"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:layout_marginEnd="84dp"
-        android:clickable="true"
-        android:contentDescription="@string/buttonvolunteer"
-        android:focusable="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/buttonVolunteer"
-        app:srcCompat="@drawable/button_icon_assistance" />
+        <TextView
+            android:id="@+id/textViewJobOffer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/joboffer"
+            app:layout_constraintEnd_toEndOf="@+id/buttonJobOffer"
+            app:layout_constraintStart_toStartOf="@+id/buttonJobOffer"
+            app:layout_constraintTop_toBottomOf="@+id/buttonJobOffer" />
 
-    <TextView
-        android:id="@+id/textViewAssistance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/assistance"
-        app:layout_constraintTop_toBottomOf="@+id/buttonAssistance"
-        app:layout_constraintStart_toStartOf="@+id/buttonAssistance"
-        app:layout_constraintEnd_toEndOf="@+id/buttonAssistance"
-        android:layout_marginTop="8dp"/>
+        <ImageView
+            android:id="@+id/buttonVolunteer"
+            android:layout_width="0dp"
+            android:layout_height="96dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="52dp"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"
+            android:contentDescription="@string/buttonintern"
+            android:focusable="true"
+            app:layout_constraintEnd_toStartOf="@+id/buttonAssistance"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonTravel"
+            app:srcCompat="@drawable/button_volunteer_icon" />
 
-    <ImageView
-        android:id="@+id/buttonIntern"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:layout_marginEnd="8dp"
-        android:clickable="true"
-        android:contentDescription="@string/buttonAssistance"
-        android:focusable="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/buttonJobOffer"
-        app:srcCompat="@drawable/button_intern_icon" />
+        <TextView
+            android:id="@+id/textViewVolunteer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/volunteer"
+            app:layout_constraintEnd_toEndOf="@+id/buttonVolunteer"
+            app:layout_constraintStart_toStartOf="@+id/buttonVolunteer"
+            app:layout_constraintTop_toBottomOf="@+id/buttonVolunteer" />
 
-    <TextView
-        android:id="@+id/textViewIntern"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/intern"
-        app:layout_constraintTop_toBottomOf="@+id/buttonIntern"
-        app:layout_constraintStart_toStartOf="@+id/buttonIntern"
-        app:layout_constraintEnd_toEndOf="@+id/buttonIntern"
-        android:layout_marginTop="8dp"/>
+        <ImageView
+            android:id="@+id/buttonAssistance"
+            android:layout_width="0dp"
+            android:layout_height="96dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="32dp"
+            android:clickable="true"
+            android:contentDescription="@string/buttonvolunteer"
+            android:focusable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/buttonVolunteer"
+            app:layout_constraintTop_toTopOf="@+id/buttonVolunteer"
+            app:srcCompat="@drawable/button_icon_assistance" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/textViewAssistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/assistance"
+            app:layout_constraintEnd_toEndOf="@+id/buttonAssistance"
+            app:layout_constraintStart_toStartOf="@+id/buttonAssistance"
+            app:layout_constraintTop_toBottomOf="@+id/buttonAssistance" />
+
+        <ImageView
+            android:id="@+id/buttonIntern"
+            android:layout_width="0dp"
+            android:layout_height="96dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"
+            android:contentDescription="@string/buttonAssistance"
+            android:focusable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/buttonJobOffer"
+            app:layout_constraintTop_toTopOf="@+id/buttonJobOffer"
+            app:srcCompat="@drawable/button_intern_icon" />
+
+        <TextView
+            android:id="@+id/textViewIntern"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/intern"
+            app:layout_constraintEnd_toEndOf="@+id/buttonIntern"
+            app:layout_constraintStart_toStartOf="@+id/buttonIntern"
+            app:layout_constraintTop_toBottomOf="@+id/buttonIntern" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

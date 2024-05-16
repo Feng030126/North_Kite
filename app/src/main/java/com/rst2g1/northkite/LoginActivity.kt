@@ -9,8 +9,11 @@ import android.text.TextWatcher
 import android.widget.EditText
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.rst2g1.northkite.databinding.LoginPageBinding
 import com.rst2g1.northkite.databinding.RegisterPageBinding
 
@@ -21,12 +24,15 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private var isRegister = false
 
+    private lateinit var loginEmail: EditText
+    private lateinit var loginPassword: EditText
+
     private lateinit var firstNameEditText: EditText
     private lateinit var lastNameEditText: EditText
     private lateinit var usernameEditText: EditText
     private lateinit var passwordEditText: EditText
     private lateinit var confirmPasswordEditText: EditText
-    private lateinit var recoveryEmailEditText: EditText
+    private lateinit var emailEditText: EditText
 
     private lateinit var database: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
@@ -48,6 +54,7 @@ class LoginActivity : AppCompatActivity() {
 
         setupListeners()
         setupBackPressedHandler()
+        initializeLoginFields()
         initializeRegistrationFields()
     }
 
@@ -62,6 +69,10 @@ class LoginActivity : AppCompatActivity() {
             buttonRegister.setOnClickListener {
                 setContentView(bindingRegister.root)
                 isRegister = true
+            }
+
+            buttonLogin.setOnClickListener {
+                loginAccount()
             }
         }
 
@@ -95,6 +106,110 @@ class LoginActivity : AppCompatActivity() {
         }.create().show()
     }
 
+    private fun initializeLoginFields() {
+        with(binding) {
+            loginEmail = editTextEmail
+            loginPassword = editTextPassword
+        }
+
+        addLoginTextWatchers()
+    }
+
+    private fun addLoginTextWatchers() {
+        listOf(loginEmail, loginPassword).forEach {
+            it.addTextChangedListener(createLoginTextWatcher(it))
+        }
+    }
+
+    private fun createLoginTextWatcher(editText: EditText): TextWatcher {
+        return object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                resetLoginErrorState(editText)
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        }
+    }
+
+    private fun resetErrorState(editText: EditText) {
+        editText.setBackgroundResource(R.drawable.rounded_edittext_background)
+        editText.error = null
+    }
+
+    private fun resetLoginErrorState(editText: EditText) {
+        editText.error = null
+        if (editText == loginEmail) {
+            editText.setBackgroundResource(R.drawable.login_user)
+        } else {
+            editText.setBackgroundResource(R.drawable.login_password)
+        }
+    }
+
+    private fun loginAccount() {
+        val email = loginEmail.text.toString().trim()
+        val password = loginPassword.text.toString().trim()
+
+        // Check if email or password is empty
+        if (email.isEmpty() || password.isEmpty()) {
+            if (email.isEmpty()) {
+                setLoginErrorState(loginEmail, "Email cannot be empty")
+            }
+            if (password.isEmpty()) {
+                setLoginErrorState(loginPassword, "Password cannot be empty")
+            }
+            return
+        }
+
+        // Check if email and password match
+        val userId = email.replace(".", ",")
+        databaseReference.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    val user = dataSnapshot.getValue(User::class.java)
+                    if (user != null && user.password == password) {
+                        // Login successful
+                        sharedPreferences.edit().putInt("login_status", 0).apply()
+                        finish()
+                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                    } else {
+                        // Incorrect email or password
+                        setLoginErrorState(loginEmail, "Incorrect email or password")
+                        setLoginErrorState(loginPassword, "Incorrect email or password")
+                    }
+                } else {
+                    // Email not found or incorrect password
+                    setLoginErrorState(loginEmail, "Incorrect email or password")
+                    setLoginErrorState(loginPassword, "Incorrect email or password")
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle database error
+                AlertDialog.Builder(this@LoginActivity)
+                    .setTitle("Error")
+                    .setMessage(databaseError.message)
+                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                    .show()
+            }
+        })
+    }
+
+    private fun setErrorState(editText: EditText, errorMessage: String) {
+        editText.setBackgroundResource(R.drawable.redborder_rounded_edittext_background)
+        editText.error = errorMessage
+    }
+
+    private fun setLoginErrorState(editText: EditText, errorMessage: String) {
+        if (editText == loginEmail) {
+            editText.setBackgroundResource(R.drawable.login_user_error)
+        } else {
+            editText.setBackgroundResource(R.drawable.login_password_error)
+        }
+        editText.error = errorMessage
+    }
+
     private fun initializeRegistrationFields() {
         with(bindingRegister) {
             firstNameEditText = editTextFirstName
@@ -102,7 +217,7 @@ class LoginActivity : AppCompatActivity() {
             usernameEditText = editTextUsername
             passwordEditText = editTextPassword
             confirmPasswordEditText = editTextConfirmPassword
-            recoveryEmailEditText = editTextRecoveryEmail
+            emailEditText = editTextEmail
         }
 
         addTextWatchers()
@@ -110,20 +225,14 @@ class LoginActivity : AppCompatActivity() {
             if (areAnyFieldsEmpty()) {
                 highlightEmptyFields()
             } else {
-                if (!isAccountEmailExistent()) {
-                    registerAccount()
-                }
+                val email = emailEditText.text.toString().trim()
+                isEmailExistent(email)
             }
         }
     }
 
     private fun addTextWatchers() {
-        listOf(
-            firstNameEditText,
-            lastNameEditText,
-            usernameEditText,
-            recoveryEmailEditText
-        ).forEach {
+        listOf(firstNameEditText, lastNameEditText, usernameEditText, emailEditText).forEach {
             it.addTextChangedListener(createTextWatcher(it))
         }
 
@@ -139,7 +248,7 @@ class LoginActivity : AppCompatActivity() {
             usernameEditText,
             passwordEditText,
             confirmPasswordEditText,
-            recoveryEmailEditText
+            emailEditText
         ).any { it.text.isNullOrEmpty() }
     }
 
@@ -150,11 +259,10 @@ class LoginActivity : AppCompatActivity() {
             usernameEditText to "Cannot leave the field blank",
             passwordEditText to "Cannot leave the field blank",
             confirmPasswordEditText to "Cannot leave the field blank",
-            recoveryEmailEditText to "Cannot leave the field blank"
+            emailEditText to "Cannot leave the field blank"
         ).forEach { (editText, message) ->
             if (editText.text.isNullOrEmpty()) {
-                editText.setBackgroundResource(R.drawable.redborder_rounded_edittext_background)
-                editText.error = message
+                setErrorState(editText, message)
             }
         }
     }
@@ -163,7 +271,9 @@ class LoginActivity : AppCompatActivity() {
         return object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                resetErrorState(editText)
+            }
 
             override fun afterTextChanged(s: Editable?) {
                 validateField(editText, s)
@@ -175,7 +285,9 @@ class LoginActivity : AppCompatActivity() {
         return object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                resetErrorState(editText)
+            }
 
             override fun afterTextChanged(s: Editable?) {
                 validatePasswordFields(editText, s)
@@ -185,43 +297,56 @@ class LoginActivity : AppCompatActivity() {
 
     private fun validateField(editText: EditText, s: Editable?) {
         if (s.isNullOrEmpty()) {
-            editText.setBackgroundResource(R.drawable.redborder_rounded_edittext_background)
-            editText.error = "Cannot leave the field blank"
+            setErrorState(editText, "Cannot leave the field blank")
         } else {
-            editText.setBackgroundResource(R.drawable.rounded_edittext_background)
+            resetErrorState(editText)
         }
 
-        if (editText == recoveryEmailEditText && !android.util.Patterns.EMAIL_ADDRESS.matcher(s.toString())
+        if (editText == emailEditText && !android.util.Patterns.EMAIL_ADDRESS.matcher(s.toString())
                 .matches()
         ) {
-            editText.setBackgroundResource(R.drawable.redborder_rounded_edittext_background)
-            editText.error = "Invalid email format"
+            setErrorState(editText, "Invalid email format")
         }
     }
 
     private fun validatePasswordFields(editText: EditText, s: Editable?) {
         if (editText == passwordEditText) {
             if (s.isNullOrEmpty() || s.length < 8) {
-                editText.setBackgroundResource(R.drawable.redborder_rounded_edittext_background)
-                editText.error = "Password must be at least 8 characters"
+                setErrorState(editText, "Password must be at least 8 characters")
             } else {
-                editText.setBackgroundResource(R.drawable.rounded_edittext_background)
+                resetErrorState(editText)
             }
         }
 
         if (editText == confirmPasswordEditText) {
             if (s.isNullOrEmpty() || passwordEditText.text.toString() != s.toString()) {
-                editText.setBackgroundResource(R.drawable.redborder_rounded_edittext_background)
-                editText.error = "Passwords do not match"
+                setErrorState(editText, "Passwords do not match")
             } else {
-                editText.setBackgroundResource(R.drawable.rounded_edittext_background)
+                resetErrorState(editText)
             }
         }
     }
 
-    private fun isAccountEmailExistent(): Boolean {
-        // TODO: Implement email existence check
-        return false
+    private fun isEmailExistent(email: String) {
+        val userId = email.replace(".", ",")
+
+        databaseReference.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    setErrorState(emailEditText, "Email already exists")
+                } else {
+                    registerAccount()
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                AlertDialog.Builder(this@LoginActivity)
+                    .setTitle("Error")
+                    .setMessage(databaseError.message)
+                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                    .show()
+            }
+        })
     }
 
     private fun registerAccount() {
@@ -230,27 +355,23 @@ class LoginActivity : AppCompatActivity() {
         val username = usernameEditText.text.toString().trim()
         val password = passwordEditText.text.toString().trim()
         val confirmPassword = confirmPasswordEditText.text.toString().trim()
-        val recoveryEmail = recoveryEmailEditText.text.toString().trim()
+        val email = emailEditText.text.toString().trim()
 
         if (password != confirmPassword) {
-            confirmPasswordEditText.error = "Passwords do not match"
+            setErrorState(confirmPasswordEditText, "Passwords do not match")
             return
         }
 
-        // Using email as ID
-        val userId = recoveryEmail.replace(".", ",")
-
-        val user = User(firstName, lastName, username, password, recoveryEmail, null, null)
+        val userId = email.replace(".", ",")
+        val user = User(firstName, lastName, username, password, email, null, null)
 
         databaseReference.child(userId).setValue(user)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    // Registration successful
                     sharedPreferences.edit().putInt("login_status", 0).apply()
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {
-                    // Registration failed
                     AlertDialog.Builder(this)
                         .setTitle("Registration Failed")
                         .setMessage(task.exception?.message)
@@ -259,14 +380,14 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
     }
-
-    data class User(
-        val firstName: String,
-        val lastName: String,
-        val username: String,
-        val password: String,
-        val recoveryEmail: String,
-        val userGoal: String?,
-        val userType: String?
-    )
 }
+
+data class User(
+    val firstName: String = "",
+    val lastName: String = "",
+    val username: String = "",
+    val password: String = "",
+    val email: String = "",
+    val userGoal: String? = null,
+    val userType: String? = null
+)
