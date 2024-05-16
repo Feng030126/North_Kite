@@ -71,4 +71,6 @@ class MainActivity : AppCompatActivity() {
         supportActionBar!!.customView = layoutInflater.inflate(R.layout.logo_layout, null)
     }
 
+
+
 }

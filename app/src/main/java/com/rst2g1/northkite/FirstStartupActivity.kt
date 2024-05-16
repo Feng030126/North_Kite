@@ -20,6 +20,8 @@ class FirstStartupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        supportActionBar?.hide()
+
         sharedPreferences = getSharedPreferences("prefs", Context.MODE_PRIVATE)
 
         // Initialize View Binding
@@ -40,6 +42,7 @@ class FirstStartupActivity : AppCompatActivity() {
             sharedPreferences.edit().putBoolean("isFirstLaunch", false).apply()
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
+            finish()
         }
     }
 }
