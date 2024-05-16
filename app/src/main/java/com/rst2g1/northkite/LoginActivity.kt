@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.widget.EditText
 import androidx.activity.addCallback
@@ -34,7 +33,6 @@ class LoginActivity : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
         sharedPreferences.edit().putInt("login_status", -1).apply()
-        //login status: -1 for no login, 0 for logged in, 1 for guest
 
         binding = LoginPageBinding.inflate(layoutInflater)
         bindingRegister = RegisterPageBinding.inflate(layoutInflater)
@@ -42,19 +40,21 @@ class LoginActivity : AppCompatActivity() {
 
         setupListeners()
         setupBackPressedHandler()
-        register()
+        initializeRegistrationFields()
     }
 
     private fun setupListeners() {
-        binding.buttonGuest.setOnClickListener {
-            sharedPreferences.edit().putInt("login_status", 1).apply()
-            finish()
-            startActivity(Intent(this, MainActivity::class.java))
-        }
+        binding.apply {
+            buttonGuest.setOnClickListener {
+                sharedPreferences.edit().putInt("login_status", 1).apply()
+                finish()
+                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            }
 
-        binding.buttonRegister.setOnClickListener {
-            setContentView(bindingRegister.root)
-            isRegister = true
+            buttonRegister.setOnClickListener {
+                setContentView(bindingRegister.root)
+                isRegister = true
+            }
         }
 
         bindingRegister.buttonCancel.setOnClickListener {
@@ -73,49 +73,58 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun showCancelConfirmationDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Confirm to cancel register")
-            .setMessage("Are you sure you want to cancel registration?")
-            .setPositiveButton("Confirm") { _, _ ->
+        AlertDialog.Builder(this).apply {
+            setTitle("Confirm to cancel register")
+            setMessage("Are you sure you want to cancel registration?")
+            setPositiveButton("Confirm") { _, _ ->
                 isRegister = false
                 finish()
-                startActivity(Intent(this, LoginActivity::class.java))
-            }.setNegativeButton("Cancel") { dialogInterface, _ ->
+                startActivity(Intent(this@LoginActivity, LoginActivity::class.java))
+            }
+            setNegativeButton("Cancel") { dialogInterface, _ ->
                 dialogInterface.dismiss()
             }
-        cancelDialog = builder.create()
-        cancelDialog.show()
+        }.create().show()
     }
 
-    private fun register() {
-        firstNameEditText = bindingRegister.editTextFirstName
-        lastNameEditText = bindingRegister.editTextLastName
-        usernameEditText = bindingRegister.editTextUsername
-        passwordEditText = bindingRegister.editTextPassword
-        confirmPasswordEditText = bindingRegister.editTextConfirmPassword
-        recoveryEmailEditText = bindingRegister.editTextRecoveryEmail
+    private fun initializeRegistrationFields() {
+        with(bindingRegister) {
+            firstNameEditText = editTextFirstName
+            lastNameEditText = editTextLastName
+            usernameEditText = editTextUsername
+            passwordEditText = editTextPassword
+            confirmPasswordEditText = editTextConfirmPassword
+            recoveryEmailEditText = editTextRecoveryEmail
+        }
 
-        firstNameEditText.addTextChangedListener(createTextWatcher(firstNameEditText))
-        lastNameEditText.addTextChangedListener(createTextWatcher(lastNameEditText))
-        usernameEditText.addTextChangedListener(createTextWatcher(usernameEditText))
-        passwordEditText.addTextChangedListener(createPasswordTextWatcher(passwordEditText))
-        confirmPasswordEditText.addTextChangedListener(
-            createPasswordTextWatcher(confirmPasswordEditText)
-        )
-        recoveryEmailEditText.addTextChangedListener(createTextWatcher(recoveryEmailEditText))
-
+        addTextWatchers()
         bindingRegister.buttonRegister.setOnClickListener {
-            if (isAnyFieldEmpty()) {
+            if (areAnyFieldsEmpty()) {
                 highlightEmptyFields()
             } else {
-                if (!accountEmailExisted()) {
+                if (!isAccountEmailExistent()) {
                     registerAccount()
                 }
             }
         }
     }
 
-    private fun isAnyFieldEmpty(): Boolean {
+    private fun addTextWatchers() {
+        listOf(
+            firstNameEditText,
+            lastNameEditText,
+            usernameEditText,
+            recoveryEmailEditText
+        ).forEach {
+            it.addTextChangedListener(createTextWatcher(it))
+        }
+
+        listOf(passwordEditText, confirmPasswordEditText).forEach {
+            it.addTextChangedListener(createPasswordTextWatcher(it))
+        }
+    }
+
+    private fun areAnyFieldsEmpty(): Boolean {
         return listOf(
             firstNameEditText,
             lastNameEditText,
@@ -123,7 +132,7 @@ class LoginActivity : AppCompatActivity() {
             passwordEditText,
             confirmPasswordEditText,
             recoveryEmailEditText
-        ).any { TextUtils.isEmpty(it.text) }
+        ).any { it.text.isNullOrEmpty() }
     }
 
     private fun highlightEmptyFields() {
@@ -135,7 +144,7 @@ class LoginActivity : AppCompatActivity() {
             confirmPasswordEditText to "Cannot leave the field blank",
             recoveryEmailEditText to "Cannot leave the field blank"
         ).forEach { (editText, message) ->
-            if (TextUtils.isEmpty(editText.text)) {
+            if (editText.text.isNullOrEmpty()) {
                 editText.setBackgroundResource(R.drawable.redborder_rounded_edittext_background)
                 editText.error = message
             }
@@ -149,20 +158,7 @@ class LoginActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable?) {
-                if (s.isNullOrEmpty()) {
-                    editText.setBackgroundResource(R.drawable.redborder_rounded_edittext_background)
-                    editText.error = "Cannot leave the field blank"
-                } else {
-                    editText.setBackgroundResource(R.drawable.rounded_edittext_background)
-                }
-
-                if (editText == recoveryEmailEditText && !android.util.Patterns.EMAIL_ADDRESS.matcher(
-                        s.toString()
-                    ).matches()
-                ) {
-                    editText.setBackgroundResource(R.drawable.redborder_rounded_edittext_background)
-                    editText.error = "Invalid email format"
-                }
+                validateField(editText, s)
             }
         }
     }
@@ -174,39 +170,53 @@ class LoginActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable?) {
-                if (editText == passwordEditText) {
-                    handlePasswordTextChanged(s, editText)
-                } else if (editText == confirmPasswordEditText) {
-                    handleConfirmPasswordTextChanged(s)
-                }
+                validatePasswordFields(editText, s)
             }
         }
     }
 
-    private fun handlePasswordTextChanged(s: Editable?, editText: EditText) {
-        if (s.isNullOrEmpty() || s.length < 8) {
+    private fun validateField(editText: EditText, s: Editable?) {
+        if (s.isNullOrEmpty()) {
             editText.setBackgroundResource(R.drawable.redborder_rounded_edittext_background)
-            editText.error = "Password must be at least 8 characters"
+            editText.error = "Cannot leave the field blank"
         } else {
             editText.setBackgroundResource(R.drawable.rounded_edittext_background)
         }
-    }
 
-    private fun handleConfirmPasswordTextChanged(s: Editable?) {
-        if (s.isNullOrEmpty() || passwordEditText.text.toString() != s.toString()) {
-            confirmPasswordEditText.setBackgroundResource(R.drawable.redborder_rounded_edittext_background)
-            confirmPasswordEditText.error = "Passwords do not match"
-        } else {
-            confirmPasswordEditText.setBackgroundResource(R.drawable.rounded_edittext_background)
+        if (editText == recoveryEmailEditText && !android.util.Patterns.EMAIL_ADDRESS.matcher(s.toString())
+                .matches()
+        ) {
+            editText.setBackgroundResource(R.drawable.redborder_rounded_edittext_background)
+            editText.error = "Invalid email format"
         }
     }
 
-    private fun accountEmailExisted(): Boolean {
-        //TODO:check email
+    private fun validatePasswordFields(editText: EditText, s: Editable?) {
+        if (editText == passwordEditText) {
+            if (s.isNullOrEmpty() || s.length < 8) {
+                editText.setBackgroundResource(R.drawable.redborder_rounded_edittext_background)
+                editText.error = "Password must be at least 8 characters"
+            } else {
+                editText.setBackgroundResource(R.drawable.rounded_edittext_background)
+            }
+        }
+
+        if (editText == confirmPasswordEditText) {
+            if (s.isNullOrEmpty() || passwordEditText.text.toString() != s.toString()) {
+                editText.setBackgroundResource(R.drawable.redborder_rounded_edittext_background)
+                editText.error = "Passwords do not match"
+            } else {
+                editText.setBackgroundResource(R.drawable.rounded_edittext_background)
+            }
+        }
+    }
+
+    private fun isAccountEmailExistent(): Boolean {
+        // TODO: Implement email existence check
         return false
     }
 
     private fun registerAccount() {
-        //TODO:register account
+        // TODO: Implement account registration logic
     }
 }
