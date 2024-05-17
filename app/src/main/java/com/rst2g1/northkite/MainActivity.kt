@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.commit
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -25,19 +26,22 @@ class MainActivity : AppCompatActivity() {
         val isFirstLaunch = sharedPreferences.getBoolean("isFirstLaunch", true)
 
         if (isFirstLaunch) {
-            // If it's the first launch, show the startup page
-            val intent = Intent(this, FirstStartupActivity::class.java)
-            startActivity(intent)
-            // Set isFirstLaunch to false to indicate the app has been launched before
-            //sharedPreferences.edit().putBoolean("isFirstLaunch", false).apply()
+            // If it's the first launch, show the startup fragment
+            supportFragmentManager.commit {
+                replace(R.id.nav_host_fragment_activity_main, FirstStartupFragment())
+            }
             return
         }
+
 
         val isLoggedIn = sharedPreferences.getInt("login_status", -1)
 
         if (isLoggedIn == -1) {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+            // Load LoginFragment if not logged in
+            supportFragmentManager.commit {
+                replace(R.id.nav_host_fragment_activity_main, LoginFragment())
+            }
+            return
         }
 
         binding = ActivityMainBinding.inflate(layoutInflater)

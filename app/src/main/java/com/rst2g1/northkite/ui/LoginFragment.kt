@@ -6,9 +6,13 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -17,7 +21,7 @@ import com.google.firebase.database.ValueEventListener
 import com.rst2g1.northkite.databinding.LoginPageBinding
 import com.rst2g1.northkite.databinding.RegisterPageBinding
 
-class LoginActivity : AppCompatActivity() {
+class LoginFragment : Fragment() {
 
     private lateinit var binding: LoginPageBinding
     private lateinit var bindingRegister: RegisterPageBinding
@@ -37,37 +41,37 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var database: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        supportActionBar?.hide()
-
-        sharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        sharedPreferences = requireActivity().getSharedPreferences("prefs", AppCompatActivity.MODE_PRIVATE)
         sharedPreferences.edit().putInt("login_status", -1).apply()
 
-        binding = LoginPageBinding.inflate(layoutInflater)
-        bindingRegister = RegisterPageBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        binding = LoginPageBinding.inflate(inflater, container, false)
+        bindingRegister = RegisterPageBinding.inflate(inflater, container, false)
 
-        database =
-            FirebaseDatabase.getInstance("https://northkite-1120-default-rtdb.asia-southeast1.firebasedatabase.app")
+        database = FirebaseDatabase.getInstance("https://northkite-1120-default-rtdb.asia-southeast1.firebasedatabase.app")
         databaseReference = database.reference.child("users")
 
         setupListeners()
         setupBackPressedHandler()
         initializeLoginFields()
         initializeRegistrationFields()
+
+        return binding.root
     }
 
     private fun setupListeners() {
         binding.apply {
             buttonGuest.setOnClickListener {
                 sharedPreferences.edit().putInt("login_status", 1).apply()
-                finish()
-                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                requireActivity().finish()
+                startActivity(Intent(requireActivity(), MainActivity::class.java))
             }
 
             buttonRegister.setOnClickListener {
-                setContentView(bindingRegister.root)
+                requireActivity().setContentView(bindingRegister.root)
                 isRegister = true
             }
 
@@ -82,23 +86,23 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setupBackPressedHandler() {
-        onBackPressedDispatcher.addCallback(this) {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if (isRegister) {
                 showCancelConfirmationDialog()
             } else {
-                finishAffinity()
+                requireActivity().finishAffinity()
             }
         }
     }
 
     private fun showCancelConfirmationDialog() {
-        AlertDialog.Builder(this).apply {
+        AlertDialog.Builder(requireContext()).apply {
             setTitle("Confirm to cancel register")
             setMessage("Are you sure you want to cancel registration?")
             setPositiveButton("Confirm") { _, _ ->
                 isRegister = false
-                finish()
-                startActivity(Intent(this@LoginActivity, LoginActivity::class.java))
+                requireActivity().finish()
+                startActivity(Intent(requireActivity(), LoginFragment::class.java))
             }
             setNegativeButton("Cancel") { dialogInterface, _ ->
                 dialogInterface.dismiss()
@@ -171,8 +175,8 @@ class LoginActivity : AppCompatActivity() {
                     if (user != null && user.password == password) {
                         // Login successful
                         sharedPreferences.edit().putInt("login_status", 0).apply()
-                        finish()
-                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                        requireActivity().finish()
+                        startActivity(Intent(requireActivity(), MainActivity::class.java))
                     } else {
                         // Incorrect email or password
                         setLoginErrorState(loginEmail, "Incorrect email or password")
@@ -187,7 +191,7 @@ class LoginActivity : AppCompatActivity() {
 
             override fun onCancelled(databaseError: DatabaseError) {
                 // Handle database error
-                AlertDialog.Builder(this@LoginActivity)
+                AlertDialog.Builder(requireContext())
                     .setTitle("Error")
                     .setMessage(databaseError.message)
                     .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
@@ -340,7 +344,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                AlertDialog.Builder(this@LoginActivity)
+                AlertDialog.Builder(requireContext())
                     .setTitle("Error")
                     .setMessage(databaseError.message)
                     .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
@@ -369,10 +373,10 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     sharedPreferences.edit().putInt("login_status", 0).apply()
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    startActivity(Intent(requireActivity(), MainActivity::class.java))
+                    requireActivity().finish()
                 } else {
-                    AlertDialog.Builder(this)
+                    AlertDialog.Builder(requireContext())
                         .setTitle("Registration Failed")
                         .setMessage(task.exception?.message)
                         .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
@@ -381,13 +385,3 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 }
-
-data class User(
-    val firstName: String = "",
-    val lastName: String = "",
-    val username: String = "",
-    val password: String = "",
-    val email: String = "",
-    val userGoal: String? = null,
-    val userType: String? = null
-)
