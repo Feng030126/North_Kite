@@ -45,13 +45,15 @@ class LoginFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        sharedPreferences = requireActivity().getSharedPreferences("prefs", AppCompatActivity.MODE_PRIVATE)
+        sharedPreferences =
+            requireActivity().getSharedPreferences("prefs", AppCompatActivity.MODE_PRIVATE)
         sharedPreferences.edit().putInt("login_status", -1).apply()
 
         binding = LoginPageBinding.inflate(inflater, container, false)
         bindingRegister = RegisterPageBinding.inflate(inflater, container, false)
 
-        database = FirebaseDatabase.getInstance("https://northkite-1120-default-rtdb.asia-southeast1.firebasedatabase.app")
+        database =
+            FirebaseDatabase.getInstance("https://northkite-1120-default-rtdb.asia-southeast1.firebasedatabase.app")
         databaseReference = database.reference.child("users")
 
         setupListeners()
@@ -385,3 +387,13 @@ class LoginFragment : Fragment() {
             }
     }
 }
+
+data class User(
+    val firstName: String = "",
+    val lastName: String = "",
+    val username: String = "",
+    val password: String = "",
+    val email: String = "",
+    val userGoal: String? = null,
+    val userType: String? = null
+)
