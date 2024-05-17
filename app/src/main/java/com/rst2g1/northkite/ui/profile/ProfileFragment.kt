@@ -8,8 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
-import com.rst2g1.northkite.LoginActivity
+import androidx.navigation.fragment.findNavController
+import com.rst2g1.northkite.ui.LoginFragment
+import com.rst2g1.northkite.R
 import com.rst2g1.northkite.databinding.FragmentProfileBinding
 
 class ProfileFragment : Fragment() {
@@ -31,16 +34,12 @@ class ProfileFragment : Fragment() {
 
         _binding!!.logoutIcon.setOnClickListener {
             sharedPreferences.edit().putInt("login_status", -1).apply()
-
-            val intent = Intent(requireContext(), LoginActivity::class.java)
-            startActivity(intent)
+            findNavController().navigate(R.id.action_navigation_profile_to_loginFragment)
         }
 
         _binding!!.logoutLabel.setOnClickListener {
             sharedPreferences.edit().putInt("login_status", -1).apply()
-
-            val intent = Intent(requireContext(), LoginActivity::class.java)
-            startActivity(intent)
+            findNavController().navigate(R.id.action_navigation_profile_to_loginFragment)
         }
 
         val isLoggedIn = sharedPreferences.getInt("login_status", -1)

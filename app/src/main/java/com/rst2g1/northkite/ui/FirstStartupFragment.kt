@@ -1,91 +1,88 @@
-package com.rst2g1.northkite
+package com.rst2g1.northkite.ui
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
+import androidx.navigation.fragment.findNavController
+import com.rst2g1.northkite.R
 import com.rst2g1.northkite.databinding.FirstStartOneBinding
 import com.rst2g1.northkite.databinding.FirstStartTwoBinding
 import com.rst2g1.northkite.databinding.FirstStartThreeBinding
+import com.rst2g1.northkite.databinding.FragmentFirstStartupBinding
 
 class FirstStartupFragment : Fragment() {
 
-    private var _bindingOne: FirstStartOneBinding? = null
-    private val bindingOne get() = _bindingOne!!
+    private lateinit var _binding: FragmentFirstStartupBinding
 
-    private var _bindingTwo: FirstStartTwoBinding? = null
-    private val bindingTwo get() = _bindingTwo!!
+    private val binding get() = _binding
 
-    private var _bindingThree: FirstStartThreeBinding? = null
-    private val bindingThree get() = _bindingThree!!
+    private lateinit var _bindingOne: FirstStartOneBinding
+    private val bindingOne get() = _bindingOne
+
+    private lateinit var _bindingTwo: FirstStartTwoBinding
+    private val bindingTwo get() = _bindingTwo
+
+    private lateinit var _bindingThree: FirstStartThreeBinding
+    private val bindingThree get() = _bindingThree
 
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+
+        _binding = FragmentFirstStartupBinding.inflate(inflater, container, false)
+
         // Inflate the initial layout (FirstStartOne)
-        _bindingOne = FirstStartOneBinding.inflate(inflater, container, false)
-        return bindingOne.root
+        _bindingOne = FirstStartOneBinding.inflate(inflater)
+
+        _bindingTwo = FirstStartTwoBinding.inflate(inflater)
+
+        _bindingThree = FirstStartThreeBinding.inflate(inflater)
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        sharedPreferences = requireActivity().getSharedPreferences("prefs", Context.MODE_PRIVATE)
+        (activity as AppCompatActivity).supportActionBar?.hide()
 
-        // Set initial view
-        setInitialView()
+        sharedPreferences = requireActivity().getSharedPreferences("prefs", Context.MODE_PRIVATE)
+        val container = view.findViewById<FrameLayout>(R.id.fragment_container)
+
+        container.removeAllViews()
+        container.addView(bindingOne.root)
 
         // Handle button clicks to switch layouts
         bindingOne.buttonNext.setOnClickListener {
-            switchToSecondLayout()
+            container.removeAllViews()
+            container.addView(bindingTwo.root)
         }
 
         bindingTwo.buttonNext2.setOnClickListener {
-            switchToThirdLayout()
+            container.removeAllViews()
+            container.addView(bindingThree.root)
         }
 
         bindingThree.buttonNext3.setOnClickListener {
             sharedPreferences.edit().putBoolean("isFirstLaunch", false).apply()
-            parentFragmentManager.commit {
-                replace(R.id.nav_host_fragment_activity_main, LoginFragment())
-                addToBackStack(null)
-            }
+            findNavController().navigate(R.id.action_firstStartupFragment_to_loginFragment)
         }
-    }
 
-    private fun setInitialView() {
-        val container = view?.findViewById<FrameLayout>(R.id.fragment_container)
-        container?.removeAllViews()
-        container?.addView(bindingOne.root)
-    }
 
-    private fun switchToSecondLayout() {
-        _bindingTwo = FirstStartTwoBinding.inflate(layoutInflater)
-        val container = view?.findViewById<FrameLayout>(R.id.fragment_container)
-        container?.removeAllViews()
-        container?.addView(bindingTwo.root)
-    }
-
-    private fun switchToThirdLayout() {
-        _bindingThree = FirstStartThreeBinding.inflate(layoutInflater)
-        val container = view?.findViewById<FrameLayout>(R.id.fragment_container)
-        container?.removeAllViews()
-        container?.addView(bindingThree.root)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _bindingOne = null
-        _bindingTwo = null
-        _bindingThree = null
+        (activity as AppCompatActivity).supportActionBar?.show()
     }
 }

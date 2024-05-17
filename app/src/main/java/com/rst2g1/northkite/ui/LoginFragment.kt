@@ -1,4 +1,4 @@
-package com.rst2g1.northkite
+package com.rst2g1.northkite.ui
 
 import android.app.AlertDialog
 import android.content.Intent
@@ -6,24 +6,33 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.FrameLayout
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.rst2g1.northkite.MainActivity
+import com.rst2g1.northkite.R
+import com.rst2g1.northkite.databinding.FragmentLoginBinding
 import com.rst2g1.northkite.databinding.LoginPageBinding
 import com.rst2g1.northkite.databinding.RegisterPageBinding
 
 class LoginFragment : Fragment() {
 
-    private lateinit var binding: LoginPageBinding
+    private lateinit var binding: FragmentLoginBinding
+    private lateinit var bindingLogin: LoginPageBinding
     private lateinit var bindingRegister: RegisterPageBinding
     private lateinit var sharedPreferences: SharedPreferences
     private var isRegister = false
@@ -44,37 +53,46 @@ class LoginFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         sharedPreferences =
             requireActivity().getSharedPreferences("prefs", AppCompatActivity.MODE_PRIVATE)
         sharedPreferences.edit().putInt("login_status", -1).apply()
 
-        binding = LoginPageBinding.inflate(inflater, container, false)
-        bindingRegister = RegisterPageBinding.inflate(inflater, container, false)
+        binding = FragmentLoginBinding.inflate(inflater,container,false)
+        bindingLogin = LoginPageBinding.inflate(inflater)
+        bindingRegister = RegisterPageBinding.inflate(inflater)
 
         database =
             FirebaseDatabase.getInstance("https://northkite-1120-default-rtdb.asia-southeast1.firebasedatabase.app")
         databaseReference = database.reference.child("users")
 
-        setupListeners()
-        setupBackPressedHandler()
-        initializeLoginFields()
-        initializeRegistrationFields()
-
         return binding.root
     }
 
-    private fun setupListeners() {
-        binding.apply {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        (activity as AppCompatActivity).supportActionBar?.hide()
+
+        initializeLoginFields()
+
+        val container = view.findViewById<FrameLayout>(R.id.fragment_container_login)
+
+        container.removeAllViews()
+        container.addView(bindingLogin.root)
+
+        bindingLogin.apply {
             buttonGuest.setOnClickListener {
                 sharedPreferences.edit().putInt("login_status", 1).apply()
-                requireActivity().finish()
-                startActivity(Intent(requireActivity(), MainActivity::class.java))
+                findNavController().navigate(R.id.action_loginFragment_to_navigation_home)
             }
 
             buttonRegister.setOnClickListener {
-                requireActivity().setContentView(bindingRegister.root)
+                initializeRegistrationFields()
                 isRegister = true
+                container.removeAllViews()
+                container.addView(bindingRegister.root)
+
             }
 
             buttonLogin.setOnClickListener {
@@ -83,28 +101,26 @@ class LoginFragment : Fragment() {
         }
 
         bindingRegister.buttonCancel.setOnClickListener {
-            showCancelConfirmationDialog()
+            showCancelConfirmationDialog(container)
         }
-    }
 
-    private fun setupBackPressedHandler() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if (isRegister) {
-                showCancelConfirmationDialog()
+                showCancelConfirmationDialog(container)
             } else {
-                requireActivity().finishAffinity()
+                findNavController().popBackStack()
             }
         }
     }
 
-    private fun showCancelConfirmationDialog() {
+    private fun showCancelConfirmationDialog(container: FrameLayout) {
         AlertDialog.Builder(requireContext()).apply {
             setTitle("Confirm to cancel register")
             setMessage("Are you sure you want to cancel registration?")
             setPositiveButton("Confirm") { _, _ ->
                 isRegister = false
-                requireActivity().finish()
-                startActivity(Intent(requireActivity(), LoginFragment::class.java))
+                container.removeAllViews()
+                container.addView(bindingLogin.root)
             }
             setNegativeButton("Cancel") { dialogInterface, _ ->
                 dialogInterface.dismiss()
@@ -113,7 +129,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun initializeLoginFields() {
-        with(binding) {
+        with(bindingLogin) {
             loginEmail = editTextEmail
             loginPassword = editTextPassword
         }
@@ -177,8 +193,7 @@ class LoginFragment : Fragment() {
                     if (user != null && user.password == password) {
                         // Login successful
                         sharedPreferences.edit().putInt("login_status", 0).apply()
-                        requireActivity().finish()
-                        startActivity(Intent(requireActivity(), MainActivity::class.java))
+                        findNavController().navigate(R.id.action_loginFragment_to_navigation_home)
                     } else {
                         // Incorrect email or password
                         setLoginErrorState(loginEmail, "Incorrect email or password")
@@ -201,6 +216,7 @@ class LoginFragment : Fragment() {
             }
         })
     }
+
 
     private fun setErrorState(editText: EditText, errorMessage: String) {
         editText.setBackgroundResource(R.drawable.redborder_rounded_edittext_background)
@@ -308,7 +324,7 @@ class LoginFragment : Fragment() {
             resetErrorState(editText)
         }
 
-        if (editText == emailEditText && !android.util.Patterns.EMAIL_ADDRESS.matcher(s.toString())
+        if (editText == emailEditText && !Patterns.EMAIL_ADDRESS.matcher(s.toString())
                 .matches()
         ) {
             setErrorState(editText, "Invalid email format")
@@ -375,7 +391,7 @@ class LoginFragment : Fragment() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     sharedPreferences.edit().putInt("login_status", 0).apply()
-                    startActivity(Intent(requireActivity(), MainActivity::class.java))
+                    findNavController().navigate(R.id.action_loginFragment_to_navigation_home)
                     requireActivity().finish()
                 } else {
                     AlertDialog.Builder(requireContext())
@@ -385,6 +401,11 @@ class LoginFragment : Fragment() {
                         .show()
                 }
             }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (activity as AppCompatActivity).supportActionBar?.show()
     }
 }
 
