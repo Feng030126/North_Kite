@@ -38,4 +38,7 @@
     <string name="loginbutton">Login Button</string>
     <string name="registerbutton">Register Button</string>
     <string name="guestbutton">Guest Button</string>
+    <string name="editProfile">Leave the field empty to leave it unchanged</string>
+    <string name="confirm">Confirm</string>
+    <string name="guest">Guest</string>
 </resources>

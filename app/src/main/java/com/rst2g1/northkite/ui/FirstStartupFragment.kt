@@ -48,6 +48,8 @@ class FirstStartupFragment : Fragment() {
 
         _bindingThree = FirstStartThreeBinding.inflate(inflater)
 
+        sharedPreferences = requireActivity().getSharedPreferences("prefs", Context.MODE_PRIVATE)
+
         return binding.root
     }
 
@@ -56,7 +58,6 @@ class FirstStartupFragment : Fragment() {
 
         (activity as AppCompatActivity).supportActionBar?.hide()
 
-        sharedPreferences = requireActivity().getSharedPreferences("prefs", Context.MODE_PRIVATE)
         val container = view.findViewById<FrameLayout>(R.id.fragment_container)
 
         container.removeAllViews()

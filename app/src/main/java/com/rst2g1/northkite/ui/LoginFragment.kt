@@ -193,6 +193,7 @@ class LoginFragment : Fragment() {
                     if (user != null && user.password == password) {
                         // Login successful
                         sharedPreferences.edit().putInt("login_status", 0).apply()
+                        sharedPreferences.edit().putString("current_user", userId).apply()
                         findNavController().navigate(R.id.action_loginFragment_to_navigation_home)
                     } else {
                         // Incorrect email or password
@@ -391,6 +392,7 @@ class LoginFragment : Fragment() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     sharedPreferences.edit().putInt("login_status", 0).apply()
+                    sharedPreferences.edit().putString("current_user", userId).apply()
                     findNavController().navigate(R.id.action_loginFragment_to_navigation_home)
                     requireActivity().finish()
                 } else {
@@ -409,12 +411,12 @@ class LoginFragment : Fragment() {
     }
 }
 
-data class User(
-    val firstName: String = "",
-    val lastName: String = "",
-    val username: String = "",
+public data class User(
+    var firstName: String = "",
+    var lastName: String = "",
+    var username: String = "",
     val password: String = "",
-    val email: String = "",
+    var email: String = "",
     val userGoal: String? = null,
     val userType: String? = null
 )
