@@ -75,6 +75,7 @@ class LoginFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.hide()
 
         initializeLoginFields()
+        initializeRegistrationFields()
 
         val container = view.findViewById<FrameLayout>(R.id.fragment_container_login)
 
@@ -88,7 +89,6 @@ class LoginFragment : Fragment() {
             }
 
             buttonRegister.setOnClickListener {
-                initializeRegistrationFields()
                 isRegister = true
                 container.removeAllViews()
                 container.addView(bindingRegister.root)
@@ -102,6 +102,16 @@ class LoginFragment : Fragment() {
 
         bindingRegister.buttonCancel.setOnClickListener {
             showCancelConfirmationDialog(container)
+        }
+
+        addTextWatchers()
+        bindingRegister.buttonRegister.setOnClickListener {
+            if (areAnyFieldsEmpty()) {
+                highlightEmptyFields()
+            } else {
+                val email = emailEditText.text.toString().trim()
+                isEmailExistent(email)
+            }
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
@@ -171,7 +181,7 @@ class LoginFragment : Fragment() {
 
     private fun loginAccount() {
         val email = loginEmail.text.toString().trim()
-        val password = loginPassword.text.toString().trim()
+        val password = Encryptor.encrypt(loginPassword.text.toString().trim())
 
         // Check if email or password is empty
         if (email.isEmpty() || password.isEmpty()) {
@@ -241,16 +251,6 @@ class LoginFragment : Fragment() {
             passwordEditText = editTextPassword
             confirmPasswordEditText = editTextConfirmPassword
             emailEditText = editTextEmail
-        }
-
-        addTextWatchers()
-        bindingRegister.buttonRegister.setOnClickListener {
-            if (areAnyFieldsEmpty()) {
-                highlightEmptyFields()
-            } else {
-                val email = emailEditText.text.toString().trim()
-                isEmailExistent(email)
-            }
         }
     }
 
@@ -376,8 +376,8 @@ class LoginFragment : Fragment() {
         val firstName = firstNameEditText.text.toString().trim()
         val lastName = lastNameEditText.text.toString().trim()
         val username = usernameEditText.text.toString().trim()
-        val password = passwordEditText.text.toString().trim()
-        val confirmPassword = confirmPasswordEditText.text.toString().trim()
+        val password = Encryptor.encrypt(passwordEditText.text.toString().trim())
+        val confirmPassword = Encryptor.encrypt(confirmPasswordEditText.text.toString().trim())
         val email = emailEditText.text.toString().trim()
 
         if (password != confirmPassword) {
@@ -394,7 +394,6 @@ class LoginFragment : Fragment() {
                     sharedPreferences.edit().putInt("login_status", 0).apply()
                     sharedPreferences.edit().putString("current_user", userId).apply()
                     findNavController().navigate(R.id.action_loginFragment_to_navigation_home)
-                    requireActivity().finish()
                 } else {
                     AlertDialog.Builder(requireContext())
                         .setTitle("Registration Failed")

@@ -21,6 +21,7 @@ import com.rst2g1.northkite.R
 import com.rst2g1.northkite.databinding.FragmentProfileBinding
 import com.rst2g1.northkite.databinding.ManageProfilePageBinding
 import com.rst2g1.northkite.databinding.ProfilePageBinding
+import com.rst2g1.northkite.ui.Encryptor
 import com.rst2g1.northkite.ui.User
 
 class ProfileFragment : Fragment() {
@@ -117,7 +118,7 @@ class ProfileFragment : Fragment() {
 
             builder.setPositiveButton("Confirm") { dialog, which ->
                 // Get the text from the EditText when the positive button is clicked
-                val password = input.text.toString()
+                val password = Encryptor.encrypt(input.text.toString().trim())
                 // Handle the entered text as needed
 
                 getUserFromDatabase(currentUserID) { user ->
