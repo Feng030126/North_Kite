@@ -52,22 +52,3 @@ object Notifier {
     }
 }
 
-data class Notification(
-
-    var id: String = "", // Unique identifier for the notification
-    val userID: String = "",
-    val title: String = "",
-    val message: String = ""
-
-)
-
-object NotificationID{
-
-    private var currentId = 0
-
-    fun generateUniqueId(): String {
-        // Generate a unique ID, e.g., using timestamp or UUID
-        return "notification_${currentId++}"
-    }
-
-}

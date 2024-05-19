@@ -28,6 +28,8 @@ import com.rst2g1.northkite.R
 import com.rst2g1.northkite.databinding.FragmentLoginBinding
 import com.rst2g1.northkite.databinding.LoginPageBinding
 import com.rst2g1.northkite.databinding.RegisterPageBinding
+import com.rst2g1.northkite.databinding.SelectGoalPageBinding
+import com.rst2g1.northkite.databinding.SelectTypePageBinding
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -37,6 +39,8 @@ class LoginFragment : Fragment() {
     private lateinit var binding: FragmentLoginBinding
     private lateinit var bindingLogin: LoginPageBinding
     private lateinit var bindingRegister: RegisterPageBinding
+    private lateinit var bindingGoal: SelectGoalPageBinding
+    private lateinit var bindingType: SelectTypePageBinding
     private lateinit var sharedPreferences: SharedPreferences
     private var isRegister = false
 
@@ -49,10 +53,13 @@ class LoginFragment : Fragment() {
     private lateinit var passwordEditText: EditText
     private lateinit var confirmPasswordEditText: EditText
     private lateinit var emailEditText: EditText
+    private lateinit var goal: String
+    private lateinit var type: String
 
     private lateinit var database: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
-    private lateinit var notificationReference: DatabaseReference
+
+    private lateinit var container : FrameLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,11 +72,12 @@ class LoginFragment : Fragment() {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         bindingLogin = LoginPageBinding.inflate(inflater)
         bindingRegister = RegisterPageBinding.inflate(inflater)
+        bindingGoal = SelectGoalPageBinding.inflate(inflater)
+        bindingType = SelectTypePageBinding.inflate(inflater)
 
         database =
             FirebaseDatabase.getInstance("https://northkite-1120-default-rtdb.asia-southeast1.firebasedatabase.app")
         databaseReference = database.reference.child("users")
-        notificationReference = database.reference.child("notification")
 
         return binding.root
     }
@@ -82,7 +90,7 @@ class LoginFragment : Fragment() {
         initializeLoginFields()
         initializeRegistrationFields()
 
-        val container = view.findViewById<FrameLayout>(R.id.fragment_container_login)
+        container = view.findViewById<FrameLayout>(R.id.fragment_container_login)
 
         container.removeAllViews()
         container.addView(bindingLogin.root)
@@ -117,11 +125,53 @@ class LoginFragment : Fragment() {
 
         addTextWatchers()
         bindingRegister.buttonRegister.setOnClickListener {
+
+            if (bindingRegister.editTextPassword.text != bindingRegister.editTextConfirmPassword.text) {
+                setErrorState(bindingRegister.editTextConfirmPassword, "Passwords do not match")
+            }
+
             if (areAnyFieldsEmpty()) {
                 highlightEmptyFields()
             } else {
                 val email = emailEditText.text.toString().trim()
                 isEmailExistent(email)
+            }
+        }
+
+        bindingGoal.apply {
+            buttonRelax.setOnClickListener {
+                goal = "Relax"
+                container.removeAllViews()
+                container.addView(bindingType.root)
+            }
+
+            buttonStudy.setOnClickListener {
+                goal = "Study"
+                container.removeAllViews()
+                container.addView(bindingType.root)
+            }
+
+            buttonTravelling.setOnClickListener {
+                goal = "Travel"
+                container.removeAllViews()
+                container.addView(bindingType.root)
+            }
+        }
+
+        bindingType.apply {
+            buttonStudent.setOnClickListener {
+                type="Student"
+                registerAccount()
+            }
+
+            buttonOther.setOnClickListener {
+                type="Other"
+                registerAccount()
+            }
+
+            buttonSociety.setOnClickListener {
+                type="Society"
+                registerAccount()
             }
         }
 
@@ -369,7 +419,8 @@ class LoginFragment : Fragment() {
                 if (dataSnapshot.exists()) {
                     setErrorState(emailEditText, "Email already exists")
                 } else {
-                    registerAccount()
+                    container.removeAllViews()
+                    container.addView(bindingGoal.root)
                 }
             }
 
@@ -391,20 +442,9 @@ class LoginFragment : Fragment() {
         val confirmPassword = Encryptor.encrypt(confirmPasswordEditText.text.toString().trim())
         val email = emailEditText.text.toString().trim()
 
-        if (password != confirmPassword) {
-            setErrorState(confirmPasswordEditText, "Passwords do not match")
-            return
-        }
-
         val userId = email.replace(".", ",")
         val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-        val user = User(firstName, lastName, username, password, email, currentDate, null, null)
-        val notification = Notification(
-            NotificationID.generateUniqueId(),
-            userId,
-            "Welcome",
-            "Welcome to NORTH KITE"
-        )
+        val user = User(firstName, lastName, username, password, email, currentDate, goal, type)
 
         databaseReference.child(userId).setValue(user)
             .addOnCompleteListener { task ->
@@ -418,9 +458,8 @@ class LoginFragment : Fragment() {
                         "Welcome to NORTH KITE!"
                     )
 
-                    notificationReference.child(notification.id).setValue(notification)
-
                     findNavController().navigate(R.id.action_loginFragment_to_navigation_home)
+
                 } else {
                     AlertDialog.Builder(requireContext())
                         .setTitle("Registration Failed")
@@ -434,6 +473,7 @@ class LoginFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         (activity as AppCompatActivity).supportActionBar?.show()
+        container.removeAllViews()
     }
 }
 

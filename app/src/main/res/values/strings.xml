@@ -46,4 +46,12 @@
     <string name="newpass">New Password</string>
     <string name="confirmnp">Confirm New Password</string>
     <string name="changepass">Think twice before changing password!</string>
+    <string name="goal">Before We Begin, What is Your Goal ?</string>
+    <string name="relax">Relax</string>
+    <string name="travelling">Travelling</string>
+    <string name="study">Study</string>
+    <string name="you_are_a">You are a...</string>
+    <string name="student">Student</string>
+    <string name="society">Society</string>
+    <string name="other">Other</string>
 </resources>

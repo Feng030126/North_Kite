@@ -29,9 +29,6 @@
         <action
             android:id="@+id/action_navigation_profile_to_loginFragment"
             app:destination="@id/loginFragment" />
-        <action
-            android:id="@+id/action_navigation_profile_to_notificationFragment"
-            app:destination="@id/notificationFragment" />
     </fragment>
 
     <fragment
@@ -54,13 +51,4 @@
             app:destination="@id/navigation_home" />
     </fragment>
 
-    <fragment
-        android:id="@+id/notificationFragment"
-        android:name="com.rst2g1.northkite.ui.NotificationsFragment"
-        android:label="Notification"
-        tools:layout="@layout/fragment_notification" >
-        <action
-            android:id="@+id/action_notificationFragment_to_navigation_profile"
-            app:destination="@id/navigation_profile" />
-    </fragment>
 </navigation>

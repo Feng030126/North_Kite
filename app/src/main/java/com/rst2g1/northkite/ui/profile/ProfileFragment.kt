@@ -115,10 +115,6 @@ class ProfileFragment : Fragment() {
                 container.addView(bindingPassword.root)
             }
 
-            bindingProfile.linearLayoutNotifications.setOnClickListener {
-                findNavController().navigate(R.id.action_navigation_profile_to_notificationFragment)
-            }
-
         }
 
         bindingManage.buttonConfirm.setOnClickListener {
