@@ -278,6 +278,7 @@ class ProfileFragment : Fragment() {
                         .addOnSuccessListener { taskSnapshot ->
                             taskSnapshot.storage.downloadUrl.addOnSuccessListener { downloadUri ->
                                 saveProfilePictureURL(userID, downloadUri.toString())
+                                bindingProfile.profilePicture.setImageURI(selectedImageUri)
                             }
                         }
                         .addOnFailureListener { exception ->
