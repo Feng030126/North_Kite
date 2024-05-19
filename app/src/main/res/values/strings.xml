@@ -46,4 +46,6 @@
     <string name="newpass">New Password</string>
     <string name="confirmnp">Confirm New Password</string>
     <string name="changepass">Think twice before changing password!</string>
+    <string name="joined_time_format">%d days</string>
+
 </resources>

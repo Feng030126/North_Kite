@@ -37,18 +37,19 @@
             tools:targetApi="s" />
 
         <TextView
-            android:id="@+id/displayUsername"
+            android:id="@+id/joined_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"
+            android:contentDescription="@string/username"
+            android:text="@string/joined"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="@string/username"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/joined_month"
+            android:id="@+id/joined_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -58,7 +59,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/displayUsername" />
+            app:layout_constraintTop_toBottomOf="@+id/joined_label" />
 
         <TextView
             android:id="@id/username"
@@ -93,10 +94,10 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:clickable="true"
+            android:focusable="true"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_label"
-            android:focusable="true">
+            app:layout_constraintTop_toBottomOf="@+id/profile_label">
 
             <ImageView
                 android:id="@+id/manage_profile_icon"
@@ -147,11 +148,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:clickable="true"
+            android:focusable="true"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/setting_label"
-            android:clickable="true"
-            android:focusable="true">
+            app:layout_constraintTop_toBottomOf="@+id/setting_label">
 
             <ImageView
                 android:id="@+id/notification_icon"
@@ -189,11 +190,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:clickable="true"
+            android:focusable="true"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayoutNotifications"
-            android:clickable="true"
-            android:focusable="true">
+            app:layout_constraintTop_toBottomOf="@+id/linearLayoutNotifications">
 
             <ImageView
                 android:id="@+id/privacy_security_icon"
@@ -286,12 +287,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:clickable="true"
+            android:focusable="true"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayoutTheme"
-            android:focusable="true">
+            app:layout_constraintTop_toBottomOf="@+id/linearLayoutTheme">
 
             <ImageView
                 android:id="@+id/logout_icon"

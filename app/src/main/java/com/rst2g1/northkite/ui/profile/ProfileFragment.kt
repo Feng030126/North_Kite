@@ -3,6 +3,7 @@ package com.rst2g1.northkite.ui.profile
 import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.database.DataSnapshot
@@ -24,6 +26,9 @@ import com.rst2g1.northkite.databinding.ManageProfilePageBinding
 import com.rst2g1.northkite.databinding.ProfilePageBinding
 import com.rst2g1.northkite.ui.Encryptor
 import com.rst2g1.northkite.ui.User
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 class ProfileFragment : Fragment() {
 
@@ -65,6 +70,7 @@ class ProfileFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -102,6 +108,12 @@ class ProfileFragment : Fragment() {
                     // User retrieved successfully, do something with the user
                     val username = user.username
                     bindingProfile.username.text = username
+
+
+                    val registerDate = user.date
+                    val joinedTime = calculateDaysSinceRegister(registerDate)
+                    bindingProfile.joinedTime.text =
+                        getString(R.string.joined_time_format, joinedTime)
                 }
             }
 
@@ -370,6 +382,19 @@ class ProfileFragment : Fragment() {
             }
         }.create().show()
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun calculateDaysSinceRegister(registerDate: String?): Long {
+        return if (registerDate != null) {
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val registrationDate = LocalDate.parse(registerDate, formatter)
+            val currentDate = LocalDate.now()
+            ChronoUnit.DAYS.between(registrationDate, currentDate)
+        } else {
+            0
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
