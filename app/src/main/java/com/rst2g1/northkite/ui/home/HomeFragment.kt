@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.rst2g1.northkite.R
@@ -33,6 +34,7 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+
         val imageList = ArrayList<SlideModel>()
 
         imageList.add(SlideModel(R.drawable.home_banner_1))
@@ -40,6 +42,16 @@ class HomeFragment : Fragment() {
         imageList.add(SlideModel(R.drawable.home_banner_3))
 
         binding.slideshow.setImageList(imageList, ScaleTypes.FIT)
+
+        // Set click listener for the travel icon
+        binding.buttonTravel.setOnClickListener {
+            findNavController().navigate(R.id.action_home_to_travel)
+        }
+
+        //Set click listener for the Find Job icon
+        binding.buttonJobOffer.setOnClickListener {
+            findNavController().navigate(R.id.action_home_to_job_offer)
+        }
 
         return root
     }

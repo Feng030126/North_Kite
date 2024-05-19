@@ -10,11 +10,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?android:attr/windowBackground"
+        app:itemBackground="@drawable/bottom_nav_item_background"
         app:itemIconSize="36dp"
         app:itemIconTint="@color/black"
-        app:itemBackground="@drawable/bottom_nav_item_background"
         app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:menu="@menu/bottom_nav_menu" />
