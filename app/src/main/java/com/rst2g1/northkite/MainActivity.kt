@@ -3,6 +3,7 @@ package com.rst2g1.northkite
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         Notifier.createChannel(this)
 
         sharedPreferences = getSharedPreferences("prefs", Context.MODE_PRIVATE)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -36,13 +38,11 @@ class MainActivity : AppCompatActivity() {
         val isFirstLaunch = sharedPreferences.getBoolean("isFirstLaunch", true)
         if (isFirstLaunch) {
             navController.navigate(R.id.firstStartupFragment)
-            return
         }
 
         val isLoggedIn = sharedPreferences.getInt("login_status", -1)
         if (isLoggedIn == -1) {
             navController.navigate(R.id.loginFragment)
-            return
         }
 
         val navView: BottomNavigationView = binding.navView

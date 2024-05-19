@@ -92,7 +92,7 @@ class ProfileFragment : Fragment() {
 
         if (isLoggedIn == 1) {
             bindingProfile.loginToContinueLabel.visibility = View.VISIBLE // guest login
-            bindingProfile.displayUsername.setText(R.string.guest)
+            bindingProfile.username.setText(R.string.guest)
         }
 
         if (isLoggedIn == 0) {
@@ -101,11 +101,10 @@ class ProfileFragment : Fragment() {
                 user?.let {
                     // User retrieved successfully, do something with the user
                     val username = user.username
-                    bindingProfile.displayUsername.text = username
+                    bindingProfile.username.text = username
                 }
             }
 
-            //normal login, all profile button function here
             bindingProfile.linearLayoutProfile.setOnClickListener {
                 container.removeAllViews()
                 container.addView(bindingManage.root)
@@ -133,7 +132,7 @@ class ProfileFragment : Fragment() {
             input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             builder.setView(input)
 
-            builder.setPositiveButton("Confirm") { dialog, which ->
+            builder.setPositiveButton("Confirm") { dialog, _ ->
                 // Get the text from the EditText when the positive button is clicked
                 val password = Encryptor.encrypt(input.text.toString().trim())
                 // Handle the entered text as needed
@@ -156,7 +155,7 @@ class ProfileFragment : Fragment() {
                 }
             }
 
-            builder.setNegativeButton("Cancel") { dialog, which ->
+            builder.setNegativeButton("Cancel") { dialog, _ ->
                 // Cancel button clicked, dismiss the dialog
                 dialog.dismiss()
             }
@@ -177,7 +176,7 @@ class ProfileFragment : Fragment() {
             AlertDialog.Builder(requireContext())
                 .setTitle("Last confirmation")
                 .setMessage("Are you sure to change your password?")
-                .setPositiveButton("Yes") { dialog, _ ->
+                .setPositiveButton("Yes") { _, _ ->
                     if (checkIfPassEqConf()) {
                         getUserFromDatabase(currentUserID) { user ->
                             // Handle the retrieved user here
@@ -232,9 +231,9 @@ class ProfileFragment : Fragment() {
         val newPassword =
             Encryptor.encrypt(bindingPassword.editTextNewPassword.text.toString().trim())
         val currentUserID = user.email.replace(".", ",")
-        val userWithNewPass = user;
+        val userWithNewPass = user
 
-        userWithNewPass.password = newPassword;
+        userWithNewPass.password = newPassword
         databaseReference.child(currentUserID).setValue(userWithNewPass).addOnSuccessListener {
 
             AlertDialog.Builder(requireContext())
@@ -282,18 +281,18 @@ class ProfileFragment : Fragment() {
 
     private fun confirmChanges(user: User) {
 
-        var newUserData: User = user
+        val newUserData: User = user
         val currentUserID = user.email.replace(".", ",")
 
-        if (!bindingManage.editTextFirstName.text.isEmpty()) {
+        if (bindingManage.editTextFirstName.text.isNotEmpty()) {
             newUserData.firstName = bindingManage.editTextFirstName.text.toString().trim()
         }
 
-        if (!bindingManage.editTextLastName.text.isEmpty()) {
+        if (bindingManage.editTextLastName.text.isNotEmpty()) {
             newUserData.lastName = bindingManage.editTextLastName.text.toString().trim()
         }
 
-        if (!bindingManage.editTextUsername.text.isEmpty()) {
+        if (bindingManage.editTextUsername.text.isNotEmpty()) {
             newUserData.username = bindingManage.editTextUsername.text.toString().trim()
         }
 
@@ -356,7 +355,7 @@ class ProfileFragment : Fragment() {
         AlertDialog.Builder(requireContext()).apply {
             setTitle("Process successful")
             setMessage("Successfully edit users detail")
-            setPositiveButton("Confirm") { dialog, which ->
+            setPositiveButton("Confirm") { dialog, _ ->
                 dialog.dismiss()
             }
         }.create().show()
@@ -366,7 +365,7 @@ class ProfileFragment : Fragment() {
         AlertDialog.Builder(requireContext()).apply {
             setTitle("Error")
             setMessage(message)
-            setPositiveButton("Confirm") { dialog, which ->
+            setPositiveButton("Confirm") { dialog, _ ->
                 dialog.dismiss()
             }
         }.create().show()

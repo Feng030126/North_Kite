@@ -28,6 +28,9 @@ import com.rst2g1.northkite.R
 import com.rst2g1.northkite.databinding.FragmentLoginBinding
 import com.rst2g1.northkite.databinding.LoginPageBinding
 import com.rst2g1.northkite.databinding.RegisterPageBinding
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class LoginFragment : Fragment() {
 
@@ -59,7 +62,7 @@ class LoginFragment : Fragment() {
             requireActivity().getSharedPreferences("prefs", AppCompatActivity.MODE_PRIVATE)
         sharedPreferences.edit().putInt("login_status", -1).apply()
 
-        binding = FragmentLoginBinding.inflate(inflater,container,false)
+        binding = FragmentLoginBinding.inflate(inflater, container, false)
         bindingLogin = LoginPageBinding.inflate(inflater)
         bindingRegister = RegisterPageBinding.inflate(inflater)
 
@@ -87,7 +90,11 @@ class LoginFragment : Fragment() {
         bindingLogin.apply {
             buttonGuest.setOnClickListener {
                 sharedPreferences.edit().putInt("login_status", 1).apply()
-                Notifier.sendNotification(requireActivity(), "Join us", "Register an account today!")
+                Notifier.sendNotification(
+                    requireActivity(),
+                    "Join us",
+                    "Register an account today!"
+                )
 
                 findNavController().navigate(R.id.action_loginFragment_to_navigation_home)
             }
@@ -390,8 +397,14 @@ class LoginFragment : Fragment() {
         }
 
         val userId = email.replace(".", ",")
-        val user = User(firstName, lastName, username, password, email, null, null)
-        val notification = Notification(NotificationID.generateUniqueId(), userId,"Welcome", "Welcome to NORTH KITE")
+        val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        val user = User(firstName, lastName, username, password, email, currentDate, null, null)
+        val notification = Notification(
+            NotificationID.generateUniqueId(),
+            userId,
+            "Welcome",
+            "Welcome to NORTH KITE"
+        )
 
         databaseReference.child(userId).setValue(user)
             .addOnCompleteListener { task ->
@@ -399,7 +412,11 @@ class LoginFragment : Fragment() {
                     sharedPreferences.edit().putInt("login_status", 0).apply()
                     sharedPreferences.edit().putString("current_user", userId).apply()
 
-                    Notifier.sendNotification(requireActivity(), "Welcome", "Welcome to NORTH KITE!")
+                    Notifier.sendNotification(
+                        requireActivity(),
+                        "Welcome",
+                        "Welcome to NORTH KITE!"
+                    )
 
                     notificationReference.child(notification.id).setValue(notification)
 
@@ -420,12 +437,13 @@ class LoginFragment : Fragment() {
     }
 }
 
-public data class User(
+data class User(
     var firstName: String = "",
     var lastName: String = "",
     var username: String = "",
     var password: String = "",
     var email: String = "",
+    var date: String = "",
     val userGoal: String? = null,
     val userType: String? = null
 )
