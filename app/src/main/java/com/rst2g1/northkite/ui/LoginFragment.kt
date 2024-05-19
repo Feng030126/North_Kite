@@ -1,7 +1,6 @@
 package com.rst2g1.northkite.ui
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
@@ -14,8 +13,6 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.database.DataSnapshot
@@ -23,7 +20,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.rst2g1.northkite.MainActivity
 import com.rst2g1.northkite.R
 import com.rst2g1.northkite.databinding.FragmentLoginBinding
 import com.rst2g1.northkite.databinding.LoginPageBinding
@@ -90,7 +86,7 @@ class LoginFragment : Fragment() {
         initializeLoginFields()
         initializeRegistrationFields()
 
-        container = view.findViewById<FrameLayout>(R.id.fragment_container_login)
+        container = view.findViewById(R.id.fragment_container_login)
 
         container.removeAllViews()
         container.addView(bindingLogin.root)
@@ -439,7 +435,7 @@ class LoginFragment : Fragment() {
         val lastName = lastNameEditText.text.toString().trim()
         val username = usernameEditText.text.toString().trim()
         val password = Encryptor.encrypt(passwordEditText.text.toString().trim())
-        val confirmPassword = Encryptor.encrypt(confirmPasswordEditText.text.toString().trim())
+        Encryptor.encrypt(confirmPasswordEditText.text.toString().trim())
         val email = emailEditText.text.toString().trim()
 
         val userId = email.replace(".", ",")
@@ -484,6 +480,7 @@ data class User(
     var password: String = "",
     var email: String = "",
     var date: String = "",
+    var profilePictureUrl: String? = null,
     val userGoal: String? = null,
     val userType: String? = null
 )

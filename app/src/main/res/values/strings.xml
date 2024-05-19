@@ -50,8 +50,9 @@
     <string name="relax">Relax</string>
     <string name="travelling">Travelling</string>
     <string name="study">Study</string>
-    <string name="you_are_a">You are a...</string>
+    <string name="you_are_a">You are a…</string>
     <string name="student">Student</string>
     <string name="society">Society</string>
     <string name="other">Other</string>
+    <string name="joined_time_format">%d days</string>
 </resources>

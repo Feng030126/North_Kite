@@ -3,6 +3,7 @@ package com.rst2g1.northkite.ui.profile
 import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
@@ -11,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -19,6 +22,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
 import com.rst2g1.northkite.R
 import com.rst2g1.northkite.databinding.ChangePasswordPageBinding
 import com.rst2g1.northkite.databinding.FragmentProfileBinding
@@ -26,6 +30,7 @@ import com.rst2g1.northkite.databinding.ManageProfilePageBinding
 import com.rst2g1.northkite.databinding.ProfilePageBinding
 import com.rst2g1.northkite.ui.Encryptor
 import com.rst2g1.northkite.ui.User
+import com.squareup.picasso.Picasso
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -82,6 +87,15 @@ class ProfileFragment : Fragment() {
             user?.let {
                 // User retrieved successfully, do something with the user
                 initializeEditProfile(it) // Pass the retrieved user to initializeEditProfile function
+
+                val profilePictureUrl = user.profilePictureUrl
+                if (profilePictureUrl != null) {
+                    Picasso.get()
+                        .load(profilePictureUrl)
+                        .placeholder(R.drawable.profile_default) // Placeholder image while loading
+                        .error(R.drawable.profile_default) // Error image if loading fails
+                        .into(bindingProfile.profilePicture) // Your ImageView for the profile picture
+                }
             }
         }
 
@@ -117,6 +131,8 @@ class ProfileFragment : Fragment() {
                 }
             }
 
+
+
             bindingProfile.linearLayoutProfile.setOnClickListener {
                 container.removeAllViews()
                 container.addView(bindingManage.root)
@@ -127,6 +143,9 @@ class ProfileFragment : Fragment() {
                 container.addView(bindingPassword.root)
             }
 
+            bindingProfile.profilePicture.setOnClickListener {
+                getContent.launch("image/*")
+            }
         }
 
         bindingManage.buttonConfirm.setOnClickListener {
@@ -215,9 +234,51 @@ class ProfileFragment : Fragment() {
             bindingPassword.editTextConfirmOldPassword.text.clear()
             bindingPassword.editTextConfirmNewPassword.text.clear()
         }
-
-
     }
+
+    private val getContent =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let { selectedImageUri ->
+                val currentUserID = sharedPreferences.getString("current_user", null)
+                currentUserID?.let { userID ->
+                    val storageReference = FirebaseStorage.getInstance()
+                        .getReference("profile_pictures/$userID/${System.currentTimeMillis()}")
+                    storageReference.putFile(selectedImageUri)
+                        .addOnSuccessListener { taskSnapshot ->
+                            taskSnapshot.storage.downloadUrl.addOnSuccessListener { downloadUri ->
+                                saveProfilePictureURL(userID, downloadUri.toString())
+                            }
+                        }
+                        .addOnFailureListener { exception ->
+                            Toast.makeText(
+                                requireContext(),
+                                "Failed to upload image: ${exception.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                }
+            }
+        }
+
+    private fun saveProfilePictureURL(userID: String, imageUrl: String) {
+        val currentUserID = userID.replace(".", ",")
+        databaseReference.child(currentUserID).child("profilePictureUrl").setValue(imageUrl)
+            .addOnSuccessListener {
+                Toast.makeText(
+                    requireContext(),
+                    "Profile picture updated successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to update profile picture: ${exception.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+    }
+
 
     private fun displayError() {
         AlertDialog.Builder(requireContext())
@@ -239,10 +300,9 @@ class ProfileFragment : Fragment() {
         val newPassword =
             Encryptor.encrypt(bindingPassword.editTextNewPassword.text.toString().trim())
         val currentUserID = user.email.replace(".", ",")
-        val userWithNewPass = user
 
-        userWithNewPass.password = newPassword
-        databaseReference.child(currentUserID).setValue(userWithNewPass).addOnSuccessListener {
+        user.password = newPassword
+        databaseReference.child(currentUserID).setValue(user).addOnSuccessListener {
 
             AlertDialog.Builder(requireContext())
                 .setTitle("Change success")
