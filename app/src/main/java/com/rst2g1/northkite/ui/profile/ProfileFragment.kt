@@ -12,9 +12,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.database.DataSnapshot
@@ -101,6 +103,35 @@ class ProfileFragment : Fragment() {
 
         container.removeAllViews()
         container.addView(bindingProfile.root)
+
+        bindingProfile.linearLayoutTheme.setOnClickListener { view ->
+            val popupMenu = PopupMenu(requireContext(), view)
+            popupMenu.inflate(R.menu.theme_popup_menu)
+
+            popupMenu.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.light_theme -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                        true
+                    }
+
+                    R.id.dark_theme -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                        true
+                    }
+
+                    R.id.system_theme -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+
+            popupMenu.show()
+        }
+
 
         bindingProfile.linearLayoutLogout.setOnClickListener {
             sharedPreferences.edit().putInt("login_status", -1).apply()
@@ -450,7 +481,6 @@ class ProfileFragment : Fragment() {
             0
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

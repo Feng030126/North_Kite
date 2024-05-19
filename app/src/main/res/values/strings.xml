@@ -55,4 +55,7 @@
     <string name="society">Society</string>
     <string name="other">Other</string>
     <string name="joined_time_format">%d days</string>
+    <string name="light_theme">Light Theme</string>
+    <string name="dark_theme">Dark Theme</string>
+    <string name="follow_system">Follow System</string>
 </resources>
