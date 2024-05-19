@@ -41,4 +41,9 @@
     <string name="editProfile">Leave the field empty to leave it unchanged</string>
     <string name="confirm">Confirm</string>
     <string name="guest">Guest</string>
+    <string name="oldpass">Old Password</string>
+    <string name="confirmop">Confirm Old Password</string>
+    <string name="newpass">New Password</string>
+    <string name="confirmnp">Confirm New Password</string>
+    <string name="changepass">Think twice before changing password!</string>
 </resources>

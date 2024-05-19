@@ -149,7 +149,9 @@
             android:layout_marginTop="16dp"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/setting_label">
+            app:layout_constraintTop_toBottomOf="@+id/setting_label"
+            android:clickable="true"
+            android:focusable="true">
 
             <ImageView
                 android:id="@+id/notification_icon"
@@ -189,7 +191,9 @@
             android:layout_marginTop="16dp"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayoutNotifications">
+            app:layout_constraintTop_toBottomOf="@+id/linearLayoutNotifications"
+            android:clickable="true"
+            android:focusable="true">
 
             <ImageView
                 android:id="@+id/privacy_security_icon"

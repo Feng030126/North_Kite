@@ -49,6 +49,7 @@ class LoginFragment : Fragment() {
 
     private lateinit var database: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
+    private lateinit var notificationReference: DatabaseReference
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,6 +66,7 @@ class LoginFragment : Fragment() {
         database =
             FirebaseDatabase.getInstance("https://northkite-1120-default-rtdb.asia-southeast1.firebasedatabase.app")
         databaseReference = database.reference.child("users")
+        notificationReference = database.reference.child("notification")
 
         return binding.root
     }
@@ -85,6 +87,8 @@ class LoginFragment : Fragment() {
         bindingLogin.apply {
             buttonGuest.setOnClickListener {
                 sharedPreferences.edit().putInt("login_status", 1).apply()
+                Notifier.sendNotification(requireActivity(), "Join us", "Register an account today!")
+
                 findNavController().navigate(R.id.action_loginFragment_to_navigation_home)
             }
 
@@ -387,12 +391,18 @@ class LoginFragment : Fragment() {
 
         val userId = email.replace(".", ",")
         val user = User(firstName, lastName, username, password, email, null, null)
+        val notification = Notification(NotificationID.generateUniqueId(), userId,"Welcome", "Welcome to NORTH KITE")
 
         databaseReference.child(userId).setValue(user)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     sharedPreferences.edit().putInt("login_status", 0).apply()
                     sharedPreferences.edit().putString("current_user", userId).apply()
+
+                    Notifier.sendNotification(requireActivity(), "Welcome", "Welcome to NORTH KITE!")
+
+                    notificationReference.child(notification.id).setValue(notification)
+
                     findNavController().navigate(R.id.action_loginFragment_to_navigation_home)
                 } else {
                     AlertDialog.Builder(requireContext())
@@ -414,7 +424,7 @@ public data class User(
     var firstName: String = "",
     var lastName: String = "",
     var username: String = "",
-    val password: String = "",
+    var password: String = "",
     var email: String = "",
     val userGoal: String? = null,
     val userType: String? = null

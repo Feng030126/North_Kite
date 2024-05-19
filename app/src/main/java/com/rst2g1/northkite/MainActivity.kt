@@ -13,6 +13,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.rst2g1.northkite.databinding.ActivityMainBinding
+import com.rst2g1.northkite.ui.Notifier
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,6 +22,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Notifier.createChannel(this)
 
         sharedPreferences = getSharedPreferences("prefs", Context.MODE_PRIVATE)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -71,5 +74,7 @@ class MainActivity : AppCompatActivity() {
         // Setup custom logo
         supportActionBar?.setDisplayShowCustomEnabled(true)
         supportActionBar?.customView = layoutInflater.inflate(R.layout.logo_layout, null)
+
+
     }
 }

@@ -18,6 +18,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.rst2g1.northkite.R
+import com.rst2g1.northkite.databinding.ChangePasswordPageBinding
 import com.rst2g1.northkite.databinding.FragmentProfileBinding
 import com.rst2g1.northkite.databinding.ManageProfilePageBinding
 import com.rst2g1.northkite.databinding.ProfilePageBinding
@@ -37,6 +38,10 @@ class ProfileFragment : Fragment() {
 
     private val bindingManage get() = _bindingManage
 
+    private lateinit var _bindingPassword: ChangePasswordPageBinding
+
+    private val bindingPassword get() = _bindingPassword
+
     private lateinit var sharedPreferences: SharedPreferences
 
     private lateinit var database: FirebaseDatabase
@@ -49,6 +54,7 @@ class ProfileFragment : Fragment() {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         _bindingProfile = ProfilePageBinding.inflate(inflater)
         _bindingManage = ManageProfilePageBinding.inflate(inflater)
+        _bindingPassword = ChangePasswordPageBinding.inflate(inflater)
 
         sharedPreferences = requireActivity().getSharedPreferences("prefs", Context.MODE_PRIVATE)
 
@@ -78,6 +84,7 @@ class ProfileFragment : Fragment() {
 
         bindingProfile.linearLayoutLogout.setOnClickListener {
             sharedPreferences.edit().putInt("login_status", -1).apply()
+            sharedPreferences.edit().putString("current_user", null).apply()
             findNavController().navigate(R.id.action_navigation_profile_to_loginFragment)
         }
 
@@ -88,7 +95,7 @@ class ProfileFragment : Fragment() {
             bindingProfile.displayUsername.setText(R.string.guest)
         }
 
-        if (isLoggedIn == 0){
+        if (isLoggedIn == 0) {
             getUserFromDatabase(currentUserID) { user ->
                 // Handle the retrieved user here
                 user?.let {
@@ -103,6 +110,16 @@ class ProfileFragment : Fragment() {
                 container.removeAllViews()
                 container.addView(bindingManage.root)
             }
+
+            bindingProfile.linearLayoutPrivacyAndSecurity.setOnClickListener {
+                container.removeAllViews()
+                container.addView(bindingPassword.root)
+            }
+
+            bindingProfile.linearLayoutNotifications.setOnClickListener {
+                findNavController().navigate(R.id.action_navigation_profile_to_notificationFragment)
+            }
+
         }
 
         bindingManage.buttonConfirm.setOnClickListener {
@@ -154,6 +171,109 @@ class ProfileFragment : Fragment() {
             container.addView(bindingProfile.root)
         }
 
+
+        bindingPassword.buttonConfirm.setOnClickListener {
+
+            AlertDialog.Builder(requireContext())
+                .setTitle("Last confirmation")
+                .setMessage("Are you sure to change your password?")
+                .setPositiveButton("Yes") { dialog, _ ->
+                    if (checkIfPassEqConf()) {
+                        getUserFromDatabase(currentUserID) { user ->
+                            // Handle the retrieved user here
+                            user?.let {
+                                // User retrieved successfully, do something with the user
+                                if (validate(it)) {
+                                    updatePassword(it)
+                                } else {
+                                    displayError()
+                                }
+
+                                // Pass the retrieved user to initializeEditProfile function
+                            }
+                        }
+                    } else {
+                        displayError()
+                    }
+                }
+                .setNegativeButton("No") { dialog, _ -> dialog.dismiss() }
+                .show()
+        }
+
+        bindingPassword.buttonCancel.setOnClickListener {
+            container.removeAllViews()
+            container.addView(bindingProfile.root)
+            bindingPassword.editTextOldPassword.text.clear()
+            bindingPassword.editTextNewPassword.text.clear()
+            bindingPassword.editTextConfirmOldPassword.text.clear()
+            bindingPassword.editTextConfirmNewPassword.text.clear()
+        }
+
+
+    }
+
+    private fun displayError() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Change fail!")
+            .setMessage("Error! Incorrect password!")
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .show()
+    }
+
+    private fun validate(user: User): Boolean {
+
+        return Encryptor.encrypt(
+            bindingPassword.editTextOldPassword.text.toString().trim()
+        ) == user.password
+
+    }
+
+    private fun updatePassword(user: User) {
+        val newPassword =
+            Encryptor.encrypt(bindingPassword.editTextNewPassword.text.toString().trim())
+        val currentUserID = user.email.replace(".", ",")
+        val userWithNewPass = user;
+
+        userWithNewPass.password = newPassword;
+        databaseReference.child(currentUserID).setValue(userWithNewPass).addOnSuccessListener {
+
+            AlertDialog.Builder(requireContext())
+                .setTitle("Change success")
+                .setMessage("Successfully changed password!")
+                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                .show()
+
+        }
+            .addOnFailureListener {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Change failed")
+                    .setMessage(it.message)
+                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                    .show()
+            }
+
+        bindingPassword.editTextOldPassword.text.clear()
+        bindingPassword.editTextNewPassword.text.clear()
+        bindingPassword.editTextConfirmOldPassword.text.clear()
+        bindingPassword.editTextConfirmNewPassword.text.clear()
+
+    }
+
+    private fun checkIfPassEqConf(): Boolean {
+
+        lateinit var pass: String
+        lateinit var cpass: String
+        lateinit var newpass: String
+        lateinit var cnewpass: String
+
+        with(bindingPassword) {
+            pass = editTextOldPassword.text.toString()
+            cpass = editTextConfirmOldPassword.text.toString()
+            newpass = editTextNewPassword.text.toString()
+            cnewpass = editTextConfirmNewPassword.text.toString()
+        }
+
+        return ((pass == cpass) && (newpass == cnewpass))
     }
 
     private fun checkPassword(user: User, password: String): Boolean {
@@ -162,36 +282,36 @@ class ProfileFragment : Fragment() {
 
     private fun confirmChanges(user: User) {
 
-        var newUserData : User = user
+        var newUserData: User = user
         val currentUserID = user.email.replace(".", ",")
 
-        if(!bindingManage.editTextFirstName.text.isEmpty()){
+        if (!bindingManage.editTextFirstName.text.isEmpty()) {
             newUserData.firstName = bindingManage.editTextFirstName.text.toString().trim()
         }
 
-        if(!bindingManage.editTextLastName.text.isEmpty()){
+        if (!bindingManage.editTextLastName.text.isEmpty()) {
             newUserData.lastName = bindingManage.editTextLastName.text.toString().trim()
         }
 
-        if(!bindingManage.editTextUsername.text.isEmpty()){
+        if (!bindingManage.editTextUsername.text.isEmpty()) {
             newUserData.username = bindingManage.editTextUsername.text.toString().trim()
         }
 
-        if(bindingManage.editTextEmail.text.isEmpty()){
+        if (bindingManage.editTextEmail.text.isEmpty()) {
             databaseReference.child(currentUserID).setValue(newUserData).addOnSuccessListener {
                 userEditSuccess()
             }
                 .addOnFailureListener { exception ->
                     showErrorDialog(exception.message ?: "Unknown error occurred")
                 }
-        }
-        else{
+        } else {
             newUserData.email = bindingManage.editTextEmail.text.toString().trim()
             //need to recreate the node and assign the userData to it
             databaseReference.child(currentUserID).removeValue().addOnSuccessListener {
-                databaseReference.child(newUserData.email.replace(".",",")).setValue(newUserData).addOnSuccessListener {
-                    userEditSuccess()
-                }
+                databaseReference.child(newUserData.email.replace(".", ",")).setValue(newUserData)
+                    .addOnSuccessListener {
+                        userEditSuccess()
+                    }
                     .addOnFailureListener { exception ->
                         showErrorDialog(exception.message ?: "Unknown error occurred")
                     }
@@ -205,16 +325,17 @@ class ProfileFragment : Fragment() {
 
     private fun getUserFromDatabase(userID: String?, callback: (User?) -> Unit) {
         if (userID != null) {
-            databaseReference.child(userID).addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val user = snapshot.getValue(User::class.java)
-                    callback(user) // Pass the retrieved user to the callback function
-                }
+            databaseReference.child(userID)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val user = snapshot.getValue(User::class.java)
+                        callback(user) // Pass the retrieved user to the callback function
+                    }
 
-                override fun onCancelled(error: DatabaseError) {
-                    callback(null) // Pass null in case of error or no data found
-                }
-            })
+                    override fun onCancelled(error: DatabaseError) {
+                        callback(null) // Pass null in case of error or no data found
+                    }
+                })
         } else {
             callback(null) // Pass null if userID is null
         }
@@ -231,7 +352,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun userEditSuccess(){
+    private fun userEditSuccess() {
         AlertDialog.Builder(requireContext()).apply {
             setTitle("Process successful")
             setMessage("Successfully edit users detail")
