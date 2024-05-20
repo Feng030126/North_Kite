@@ -13,9 +13,9 @@ class PostViewHolder(private val binding: ItemPostBinding) : RecyclerView.ViewHo
         Picasso.get().load(post.profilePicUrl).into(binding.imageProfilePic)
         Picasso.get().load(post.postImageUrl).into(binding.imagePost)
 
-        binding.imageLike.setOnClickListener { listener.onItemClick(post) }
-        binding.imageComment.setOnClickListener { listener.onItemClick(post) }
-        binding.imageShare.setOnClickListener { listener.onItemClick(post) }
-        binding.imageBookmark.setOnClickListener { listener.onItemClick(post) }
+        binding.imageLike.setOnClickListener { listener.onLikeClick(post) }
+        binding.imageComment.setOnClickListener { listener.onCommentClick(post) }
+        binding.imageShare.setOnClickListener { listener.onShareClick(post) }
+        binding.imageBookmark.setOnClickListener { listener.onBookmarkClick(post) }
     }
 }

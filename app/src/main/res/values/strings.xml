@@ -60,4 +60,6 @@
 <string name="follow_system">Follow System</string>
 <string name="Like">0 likes\n</string>
 <string name="Description">Text of Description\n</string>
+    <string name="select_Image">Select Image</string>
+    <string name="upload">upload</string>
 </resources>

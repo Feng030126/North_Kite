@@ -23,6 +23,9 @@ class PostAdapter(
     override fun getItemCount(): Int = posts.size
 
     interface OnItemClickListener {
-        fun onItemClick(post: Post)
+        fun onLikeClick(post: Post)
+        fun onCommentClick(post: Post)
+        fun onShareClick(post: Post)
+        fun onBookmarkClick(post: Post)
     }
 }
