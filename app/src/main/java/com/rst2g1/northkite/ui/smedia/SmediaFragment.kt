@@ -33,9 +33,11 @@ class SmediaFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = PostAdapter(posts) { post ->
-            // Handle post item click
-        }
+        adapter = PostAdapter(posts, object : PostAdapter.OnItemClickListener {
+            override fun onItemClick(post: Post) {
+                // Handle post item click
+            }
+        })
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.adapter = adapter
     }
