@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.database.*
+import com.rst2g1.northkite.R
 import com.rst2g1.northkite.databinding.FragmentSmediaBinding
 
 class SmediaFragment : Fragment() {
@@ -31,6 +33,10 @@ class SmediaFragment : Fragment() {
 
         setupRecyclerView()
         fetchPostsFromFirebase()
+
+        binding.fabAddPost.setOnClickListener {
+            findNavController().navigate(R.id.action_navigation_smedia_to_addPostFragment)
+        }
     }
 
     private fun setupRecyclerView() {
