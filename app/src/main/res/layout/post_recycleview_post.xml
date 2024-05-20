@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="400dp">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="409dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="382dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/username"
+                app:layout_constraintBottom_toBottomOf="@+id/imageProfilePic"
+                app:layout_constraintStart_toEndOf="@+id/imageProfilePic"
+                app:layout_constraintTop_toTopOf="@+id/imageProfilePic" />
+
+            <ImageView
+                android:id="@+id/imageLike"
+                android:layout_width="35dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imagePost"
+                app:srcCompat="@drawable/heart_grey" />
+
+            <ImageView
+                android:id="@+id/imageProfilePic"
+                android:layout_width="45dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/profile_default" />
+
+            <ImageView
+                android:id="@+id/imageComment"
+                android:layout_width="27dp"
+                android:layout_height="22dp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintStart_toEndOf="@+id/imageLike"
+                app:layout_constraintTop_toBottomOf="@+id/imagePost"
+                app:srcCompat="@drawable/comment_grey" />
+
+            <ImageView
+                android:id="@+id/imageBookmark"
+                android:layout_width="19dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imagePost"
+                app:srcCompat="@drawable/bookmark_grey" />
+
+            <ImageView
+                android:id="@+id/imagePost"
+                android:layout_width="413dp"
+                android:layout_height="199dp"
+                android:scaleType="fitXY"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageProfilePic"
+                app:layout_constraintVertical_bias="0.183"
+                app:srcCompat="@drawable/image_post" />
+
+            <ImageView
+                android:id="@+id/imageShare"
+                android:layout_width="31dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintStart_toEndOf="@+id/imageComment"
+                app:layout_constraintTop_toBottomOf="@+id/imagePost"
+                app:srcCompat="@drawable/paperplane_grey" />
+
+            <TextView
+                android:id="@+id/textlike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Like"
+                app:layout_constraintStart_toStartOf="@+id/imageLike"
+                app:layout_constraintTop_toBottomOf="@+id/imageLike" />
+
+            <TextView
+                android:id="@+id/textDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Description"
+                app:layout_constraintStart_toStartOf="@+id/textlike"
+                app:layout_constraintTop_toBottomOf="@+id/textlike" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="384dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
