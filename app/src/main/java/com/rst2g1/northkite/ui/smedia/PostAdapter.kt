@@ -7,18 +7,17 @@ import com.rst2g1.northkite.databinding.ItemPostBinding
 
 class PostAdapter(
     private val posts: List<Post>,
-    private val onItemClickListener: OnItemClickListener
+    private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<PostViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = ItemPostBinding.inflate(layoutInflater, parent, false)
+        val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PostViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = posts[position]
-        holder.bind(post, onItemClickListener)
+        holder.bind(post, listener)
     }
 
     override fun getItemCount(): Int = posts.size

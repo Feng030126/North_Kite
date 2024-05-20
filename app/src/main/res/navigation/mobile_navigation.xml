@@ -31,7 +31,11 @@
         android:id="@+id/navigation_smedia"
         android:name="com.rst2g1.northkite.ui.smedia.SmediaFragment"
         android:label="@string/title_smedia"
-        tools:layout="@layout/fragment_smedia" />
+        tools:layout="@layout/fragment_smedia" >
+        <action
+            android:id="@+id/action_navigation_smedia_to_addPostFragment"
+            app:destination="@id/addPostFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_profile"
@@ -103,6 +107,11 @@
             android:name="companyId"
             app:argType="string"/>
     </fragment>
+    <fragment
+        android:id="@+id/addPostFragment"
+        android:name="com.rst2g1.northkite.ui.smedia.AddPostFragment"
+        android:label="Add Post"
+        tools:layout="@layout/fragment_add_post" />
 
 
 </navigation>

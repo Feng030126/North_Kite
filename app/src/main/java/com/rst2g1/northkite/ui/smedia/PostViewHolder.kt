@@ -8,7 +8,7 @@ class PostViewHolder(private val binding: ItemPostBinding) : RecyclerView.ViewHo
 
     fun bind(post: Post, listener: PostAdapter.OnItemClickListener) {
         binding.textUsername.text = post.username
-        binding.textlike.text = "${post.likes} likes"
+        binding.textlike.text = String.format("%d likes", post.likes)
         binding.textDescription.text = post.description
         Picasso.get().load(post.profilePicUrl).into(binding.imageProfilePic)
         Picasso.get().load(post.postImageUrl).into(binding.imagePost)
